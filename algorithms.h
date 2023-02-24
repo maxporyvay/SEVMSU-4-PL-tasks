@@ -4,11 +4,11 @@
 void bfs()
 {
 
-}
+};
 
 void dijkstra()
 {
-    
-}
+
+};
 
 #endif

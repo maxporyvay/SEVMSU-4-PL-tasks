@@ -4,11 +4,11 @@
 class Trip
 {
 
-}
+};
 
 class Cruise
 {
-    
-}
+
+};
 
 #endif
