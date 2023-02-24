@@ -84,8 +84,8 @@ int main(int argc, char** argv)
                 string cost_str = nums[1];
                 if (from != "")
                 {
-                    int time = stoi(time_str);
-                    int cost = stoi(cost_str);
+                    int cruise_time = stoi(time_str);
+                    int cruise_cost = stoi(cost_str);
 
                     if (station_name_to_id.find(from) == station_name_to_id.end())
                     {
@@ -106,7 +106,7 @@ int main(int argc, char** argv)
                         vehicle_id_to_name[max_vehicle_id] = vehicle;
                     }
 
-                    Cruise *new_cruise = new Cruise(station_name_to_id[from], station_name_to_id[to], vehicle_name_to_id[vehicle], time, cost);       
+                    Cruise *new_cruise = new Cruise(station_name_to_id[from], station_name_to_id[to], vehicle_name_to_id[vehicle], cruise_time, cruise_cost);       
                 }
             }
         }
