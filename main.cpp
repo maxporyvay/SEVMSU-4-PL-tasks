@@ -260,6 +260,15 @@ int main(int argc, char** argv)
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
                 to_id = station_name_to_id[station_to];
+                pair<vector<uint32_t>, vector<uint32_t>> d_p = bfs(from_id, next_station_id, graph, vehicles_types);
+
+                uint32_t current_station = to_id;
+                while (current_station != from_id)
+                {
+                    cout << station_id_to_name[current_station] << " ";
+                    current_station = d_p.second[current_station];
+                }
+                cout << station_id_to_name[from_id] << endl;
                 continue;
             }
             case 4:

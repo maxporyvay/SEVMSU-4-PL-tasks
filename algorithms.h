@@ -18,9 +18,37 @@ typedef tuple<uint32_t, uint32_t, uint32_t> Triad;
 
 const uint32_t INF = UINT32_MAX;
 
-void bfs()
+pair<vector<uint32_t>, vector<uint32_t>> bfs(uint32_t s, uint32_t n, map<uint32_t, map<uint32_t, vector<Cruise*>>> graph, unordered_set<uint32_t> vehicles_types)
 {
+    queue<uint32_t> q;
+    q.push(s);
+    
+    vector<uint32_t> d(n, INF), p(n, INF);
+    d[s] = 0;
+    
+    while (!q.empty()) {
+        uint32_t v = q.front();
+        q.pop();
+        for (pair<uint32_t, vector<Cruise*>> in_map : graph[v]) {
+            uint32_t u = in_map.first;
+            vector<Cruise*> cruises = in_map.second;
+            bool flag = false;
+            for (Cruise* cruise : cruises)
+            {
+                if (vehicles_types.find(cruise->vehicle_id) != vehicles_types.end())
+                {
+                    flag = true;
+                }
+            }
+            if (flag && d[u] == INF) {
+                q.push(u);
+                d[u] = d[v] + 1;
+                p[u] = v;
+            }
+        }
+    }
 
+    return {d, p};
 };
 
 pair<vector<uint32_t>, vector<uint32_t>> dijkstra(uint32_t s, uint32_t n, map<uint32_t, map<uint32_t, vector<Cruise*>>> graph, uint32_t to_optimize, unordered_set<uint32_t> vehicles_types)
