@@ -2,18 +2,19 @@
 #define CLASSES_H
 
 #include <vector>
+#include <stdint.h>
 
 using namespace std;
 
 struct Cruise
 {
-    int from_id;
-    int to_id;
-    int vehicle_id;
-    int cruise_time;
-    int cruise_cost;
+    uint32_t from_id;
+    uint32_t to_id;
+    uint32_t vehicle_id;
+    uint32_t cruise_time;
+    uint32_t cruise_cost;
 
-    Cruise(int f_id, int t_id, int v_id, int t, int c)
+    Cruise(uint32_t f_id, uint32_t t_id, uint32_t v_id, uint32_t t, uint32_t c)
     {
         from_id = f_id;
         to_id = t_id;
@@ -25,10 +26,10 @@ struct Cruise
 
 struct InversedTrip
 {
-    vector<int> stations_list;
-    int trip_time;
-    int trip_cost;
-    int stations_num;
+    vector<uint32_t> stations_list;
+    uint32_t trip_time;
+    uint32_t trip_cost;
+    uint32_t stations_num;
 
     InversedTrip()
     {
@@ -47,7 +48,7 @@ struct InversedTrip
 
     InversedTrip& operator+=(const InversedTrip& x)
     {
-        for (int i = 0; i < x.stations_num; i++)
+        for (uint32_t i = 0; i < x.stations_num; i++)
         {
             stations_list.push_back(x.stations_list[i]);
         }
@@ -57,7 +58,7 @@ struct InversedTrip
         return *this;
     }
 
-    int& operator[](int index)
+    uint32_t& operator[](uint32_t index)
     {
         return stations_list[stations_num - index - 1];
     }

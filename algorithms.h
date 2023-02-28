@@ -8,42 +8,43 @@
 #include <map>
 #include <unordered_set>
 #include <utility>
+#include <stdint.h>
+#include <iostream>
 
 using namespace std;
 
-typedef pair<int, int> Pair;
+typedef pair<uint32_t, uint32_t> Pair;
 
-// const uint INF = 4294967295;
-const int INF = 100000;
+const uint32_t INF = UINT32_MAX;
 
 void bfs()
 {
 
 };
 
-pair<vector<int>, vector<int>> dijkstra(int s, int n, map<int, map<int, vector<Cruise*>>> graph, int to_optimize, unordered_set<int> vehicles_types)
+pair<vector<uint32_t>, vector<uint32_t>> dijkstra(uint32_t s, uint32_t n, map<uint32_t, map<uint32_t, vector<Cruise*>>> graph, uint32_t to_optimize, unordered_set<uint32_t> vehicles_types)
 {
-    vector<int> d(n, INF);
-    vector<int> p(n, INF);
+    vector<uint32_t> d(n, INF);
+    vector<uint32_t> p(n, INF);
     d[s] = 0;
     priority_queue<Pair, vector<Pair>, greater<Pair>> q;
     q.push({0, s});
     while (!q.empty())
     {
-        auto top_pair = q.top();
-        int cur_d = top_pair.first;
-        int v = top_pair.second;
+        Pair top_pair = q.top();
+        uint32_t cur_d = top_pair.first;
+        uint32_t v = top_pair.second;
         q.pop();
         if (cur_d > d[v])
             continue;
-        for (auto in_map : graph[v])
+        for (pair<uint32_t, vector<Cruise*>> in_map : graph[v])
         {
-            int u = in_map.first;
+            uint32_t u = in_map.first;
             vector<Cruise*> cruises = in_map.second;
-            int min_w = INF;
-            for (auto cruise : cruises)
+            uint32_t min_w = INF;
+            for (Cruise* cruise : cruises)
             {
-                int w;
+                uint32_t w;
                 if (to_optimize == 0)
                 {
                     w = cruise->cruise_time;
@@ -57,7 +58,7 @@ pair<vector<int>, vector<int>> dijkstra(int s, int n, map<int, map<int, vector<C
                     min_w = w;
                 }
             }
-            if (d[u] > d[v] + min_w)
+            if (min_w < INF && d[u] > d[v] + min_w)
             {
                 d[u] = d[v] + min_w;
                 p[u] = v;
