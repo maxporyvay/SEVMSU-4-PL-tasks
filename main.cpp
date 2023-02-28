@@ -10,6 +10,7 @@
 #include <queue>
 #include <unordered_set>
 #include <stdint.h>
+#include <tuple>
 
 using namespace std;
 
@@ -186,6 +187,31 @@ int main(int argc, char** argv)
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
                 to_id = station_name_to_id[station_to];
+                tuple<vector<uint32_t>, vector<uint32_t>, vector<uint32_t>> d_extra_p = dijkstra_extra_cond(from_id, next_station_id, graph, 0, vehicles_types);
+
+                // for (uint32_t i = 0; i < get<0>(d_extra_p).size(); i++)
+                // {
+                //     cout << get<0>(d_extra_p)[i] << " ";
+                // }
+                // cout << endl;
+                // for (uint32_t i = 0; i < get<1>(d_extra_p).size(); i++)
+                // {
+                //     cout << get<1>(d_extra_p)[i] << " ";
+                // }
+                // cout << endl;
+                // for (uint32_t i = 0; i < get<2>(d_extra_p).size(); i++)
+                // {
+                //     cout << get<2>(d_extra_p)[i] << " ";
+                // }
+                // cout << endl;
+
+                uint32_t current_station = to_id;
+                while (current_station != from_id)
+                {
+                    cout << station_id_to_name[current_station] << " ";
+                    current_station = get<2>(d_extra_p)[current_station];
+                }
+                cout << station_id_to_name[from_id] << endl;
                 continue;
             }
             case 2:
