@@ -187,31 +187,25 @@ int main(int argc, char** argv)
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
                 to_id = station_name_to_id[station_to];
-                tuple<vector<uint32_t>, vector<uint32_t>, vector<uint32_t>> d_extra_p = dijkstra_extra_cond(from_id, next_station_id, graph, 0, vehicles_types);
+                tuple<vector<uint32_t>, vector<uint32_t>, vector<Cruise>> d_extra_p = dijkstra_extra_cond(from_id, next_station_id, graph, 0, vehicles_types);
 
-                // for (uint32_t i = 0; i < get<0>(d_extra_p).size(); i++)
-                // {
-                //     cout << get<0>(d_extra_p)[i] << " ";
-                // }
-                // cout << endl;
-                // for (uint32_t i = 0; i < get<1>(d_extra_p).size(); i++)
-                // {
-                //     cout << get<1>(d_extra_p)[i] << " ";
-                // }
-                // cout << endl;
-                // for (uint32_t i = 0; i < get<2>(d_extra_p).size(); i++)
-                // {
-                //     cout << get<2>(d_extra_p)[i] << " ";
-                // }
-                // cout << endl;
-
+                Trip *trip = new Trip();
                 uint32_t current_station = to_id;
                 while (current_station != from_id)
                 {
-                    cout << station_id_to_name[current_station] << " ";
-                    current_station = get<2>(d_extra_p)[current_station];
+                    Cruise next_cruise = get<2>(d_extra_p)[current_station];
+                    *trip += next_cruise;
+                    current_station = next_cruise.from_id;
                 }
-                cout << station_id_to_name[from_id] << endl;
+                
+                uint32_t count = 1;
+                while (!trip->finished())
+                {
+                    Cruise cruise = trip->next();
+                    cout << count++ << ") ";
+                    cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
+                    cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
+                }
                 continue;
             }
             case 2:
@@ -222,34 +216,25 @@ int main(int argc, char** argv)
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
                 to_id = station_name_to_id[station_to];
-                pair<vector<uint32_t>, vector<uint32_t>> d_p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types);
+                pair<vector<uint32_t>, vector<Cruise>> d_p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types);
 
-                // for (auto v : vehicles_types)
-                //     cout << v << " ";
-                // cout << endl;
-
-                // for (auto p : vehicle_id_to_name)
-                //     cout << p.first << ": " << p.second << ", ";
-                // cout << endl;
-
-                // for (uint32_t i = 0; i < d_p.first.size(); i++)
-                // {
-                //     cout << d_p.first[i] << " ";
-                // }
-                // cout << endl;
-                // for (uint32_t i = 0; i < d_p.second.size(); i++)
-                // {
-                //     cout << d_p.second[i] << " ";
-                // }
-                // cout << endl;
-
+                Trip *trip = new Trip();
                 uint32_t current_station = to_id;
                 while (current_station != from_id)
                 {
-                    cout << station_id_to_name[current_station] << " ";
-                    current_station = d_p.second[current_station];
+                    Cruise next_cruise = d_p.second[current_station];
+                    *trip += next_cruise;
+                    current_station = next_cruise.from_id;
                 }
-                cout << station_id_to_name[from_id] << endl;
+                
+                uint32_t count = 1;
+                while (!trip->finished())
+                {
+                    Cruise cruise = trip->next();
+                    cout << count++ << ") ";
+                    cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
+                    cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
+                }
                 continue;
             }
             case 3:
@@ -260,15 +245,25 @@ int main(int argc, char** argv)
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
                 to_id = station_name_to_id[station_to];
-                pair<vector<uint32_t>, vector<uint32_t>> d_p = bfs(from_id, next_station_id, graph, vehicles_types);
+                pair<vector<uint32_t>, vector<Cruise>> d_p = bfs(from_id, next_station_id, graph, vehicles_types);
 
+                Trip *trip = new Trip();
                 uint32_t current_station = to_id;
                 while (current_station != from_id)
                 {
-                    cout << station_id_to_name[current_station] << " ";
-                    current_station = d_p.second[current_station];
+                    Cruise next_cruise = d_p.second[current_station];
+                    *trip += next_cruise;
+                    current_station = next_cruise.from_id;
                 }
-                cout << station_id_to_name[from_id] << endl;
+                
+                uint32_t count = 1;
+                while (!trip->finished())
+                {
+                    Cruise cruise = trip->next();
+                    cout << count++ << ") ";
+                    cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
+                    cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
+                }
                 continue;
             }
             case 4:
@@ -279,19 +274,31 @@ int main(int argc, char** argv)
                 uint32_t from_id, limit_cost;
                 from_id = station_name_to_id[station_from];
                 limit_cost = stoi(limit_cost_str);
-                pair<vector<uint32_t>, vector<uint32_t>> d_p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types);
+                pair<vector<uint32_t>, vector<Cruise>> d_p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types);
 
                 for (uint32_t i = 0; i < next_station_id; i++)
                 {
                     if (i != from_id && d_p.first[i] <= limit_cost)
                     {
+                        cout << "To " << station_id_to_name[i] << ":" << endl;
+
+                        Trip *trip = new Trip();
                         uint32_t current_station = i;
                         while (current_station != from_id)
                         {
-                            cout << station_id_to_name[current_station] << " ";
-                            current_station = d_p.second[current_station];
+                            Cruise next_cruise = d_p.second[current_station];
+                            *trip += next_cruise;
+                            current_station = next_cruise.from_id;
                         }
-                        cout << station_id_to_name[from_id] << endl;
+
+                        uint32_t count = 1;
+                        while (!trip->finished())
+                        {
+                            Cruise cruise = trip->next();
+                            cout << count++ << ") ";
+                            cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
+                            cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
+                        }
                     }
                 }
                 continue;
@@ -304,19 +311,31 @@ int main(int argc, char** argv)
                 uint32_t from_id, limit_time;
                 from_id = station_name_to_id[station_from];
                 limit_time = stoi(limit_time_str);
-                pair<vector<uint32_t>, vector<uint32_t>> d_p = dijkstra(from_id, next_station_id, graph, 0, vehicles_types);
+                pair<vector<uint32_t>, vector<Cruise>> d_p = dijkstra(from_id, next_station_id, graph, 0, vehicles_types);
 
                 for (uint32_t i = 0; i < next_station_id; i++)
                 {
                     if (i != from_id && d_p.first[i] <= limit_time)
                     {
+                        cout << "To " << station_id_to_name[i] << ":" << endl;
+
+                        Trip *trip = new Trip();
                         uint32_t current_station = i;
                         while (current_station != from_id)
                         {
-                            cout << station_id_to_name[current_station] << " ";
-                            current_station = d_p.second[current_station];
+                            Cruise next_cruise = d_p.second[current_station];
+                            *trip += next_cruise;
+                            current_station = next_cruise.from_id;
                         }
-                        cout << station_id_to_name[from_id] << endl;
+
+                        uint32_t count = 1;
+                        while (!trip->finished())
+                        {
+                            Cruise cruise = trip->next();
+                            cout << count++ << ") ";
+                            cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
+                            cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
+                        }
                     }
                 }
                 continue;

@@ -18,12 +18,13 @@ typedef tuple<uint32_t, uint32_t, uint32_t> Triad;
 
 const uint32_t INF = UINT32_MAX;
 
-pair<vector<uint32_t>, vector<uint32_t>> bfs(uint32_t s, uint32_t n, map<uint32_t, map<uint32_t, vector<Cruise*>>> graph, unordered_set<uint32_t> vehicles_types)
+pair<vector<uint32_t>, vector<Cruise>> bfs(uint32_t s, uint32_t n, map<uint32_t, map<uint32_t, vector<Cruise*>>> graph, unordered_set<uint32_t> vehicles_types)
 {
     queue<uint32_t> q;
     q.push(s);
     
-    vector<uint32_t> d(n, INF), p(n, INF);
+    vector<uint32_t> d(n, INF);
+    vector<Cruise> p(n);
     d[s] = 0;
     
     while (!q.empty()) {
@@ -33,17 +34,19 @@ pair<vector<uint32_t>, vector<uint32_t>> bfs(uint32_t s, uint32_t n, map<uint32_
             uint32_t u = in_map.first;
             vector<Cruise*> cruises = in_map.second;
             bool flag = false;
+            Cruise best_cruise;
             for (Cruise* cruise : cruises)
             {
                 if (vehicles_types.find(cruise->vehicle_id) != vehicles_types.end())
                 {
                     flag = true;
+                    best_cruise = *cruise;
                 }
             }
             if (flag && d[u] == INF) {
                 q.push(u);
                 d[u] = d[v] + 1;
-                p[u] = v;
+                p[u] = best_cruise;
             }
         }
     }
@@ -51,10 +54,10 @@ pair<vector<uint32_t>, vector<uint32_t>> bfs(uint32_t s, uint32_t n, map<uint32_
     return {d, p};
 };
 
-pair<vector<uint32_t>, vector<uint32_t>> dijkstra(uint32_t s, uint32_t n, map<uint32_t, map<uint32_t, vector<Cruise*>>> graph, uint32_t to_optimize, unordered_set<uint32_t> vehicles_types)
+pair<vector<uint32_t>, vector<Cruise>> dijkstra(uint32_t s, uint32_t n, map<uint32_t, map<uint32_t, vector<Cruise*>>> graph, uint32_t to_optimize, unordered_set<uint32_t> vehicles_types)
 {
     vector<uint32_t> d(n, INF);
-    vector<uint32_t> p(n, INF);
+    vector<Cruise> p(n);
     d[s] = 0;
     priority_queue<Pair, vector<Pair>, greater<Pair>> q;
     q.push({0, s});
@@ -71,6 +74,7 @@ pair<vector<uint32_t>, vector<uint32_t>> dijkstra(uint32_t s, uint32_t n, map<ui
             uint32_t u = in_map.first;
             vector<Cruise*> cruises = in_map.second;
             uint32_t min_w = INF;
+            Cruise cruise_for_min_w;
             for (Cruise* cruise : cruises)
             {
                 uint32_t w;
@@ -85,12 +89,13 @@ pair<vector<uint32_t>, vector<uint32_t>> dijkstra(uint32_t s, uint32_t n, map<ui
                 if (vehicles_types.find(cruise->vehicle_id) != vehicles_types.end() && w < min_w)
                 {
                     min_w = w;
+                    cruise_for_min_w = *cruise;
                 }
             }
             if (min_w < INF && d[u] > d[v] + min_w)
             {
                 d[u] = d[v] + min_w;
-                p[u] = v;
+                p[u] = cruise_for_min_w;
                 q.push({d[u], u});
             }
         }
@@ -98,11 +103,11 @@ pair<vector<uint32_t>, vector<uint32_t>> dijkstra(uint32_t s, uint32_t n, map<ui
     return {d, p};
 }
 
-tuple<vector<uint32_t>, vector<uint32_t>, vector<uint32_t>> dijkstra_extra_cond(uint32_t s, uint32_t n, map<uint32_t, map<uint32_t, vector<Cruise*>>> graph, uint32_t to_optimize, unordered_set<uint32_t> vehicles_types)
+tuple<vector<uint32_t>, vector<uint32_t>, vector<Cruise>> dijkstra_extra_cond(uint32_t s, uint32_t n, map<uint32_t, map<uint32_t, vector<Cruise*>>> graph, uint32_t to_optimize, unordered_set<uint32_t> vehicles_types)
 {
     vector<uint32_t> d(n, INF);
     vector<uint32_t> extra(n, INF);
-    vector<uint32_t> p(n, INF);
+    vector<Cruise> p(n);
     d[s] = 0;
     extra[s] = 0;
     priority_queue<Triad, vector<Triad>, greater<Triad>> q;
@@ -121,6 +126,7 @@ tuple<vector<uint32_t>, vector<uint32_t>, vector<uint32_t>> dijkstra_extra_cond(
             vector<Cruise*> cruises = in_map.second;
             uint32_t min_w = INF;
             uint32_t extra_for_min_w = INF;
+            Cruise cruise_for_min_w;
             for (Cruise* cruise : cruises)
             {
                 uint32_t w, extra;
@@ -140,6 +146,7 @@ tuple<vector<uint32_t>, vector<uint32_t>, vector<uint32_t>> dijkstra_extra_cond(
                     {
                         min_w = w;
                         extra_for_min_w = extra;
+                        cruise_for_min_w = *cruise;
                     }
                 }
             }
@@ -147,7 +154,7 @@ tuple<vector<uint32_t>, vector<uint32_t>, vector<uint32_t>> dijkstra_extra_cond(
             {
                 d[u] = d[v] + min_w;
                 extra[u] = extra[v] + extra_for_min_w;
-                p[u] = v;
+                p[u] = cruise_for_min_w;
                 q.push({d[u], extra[u], u});
             }
         }

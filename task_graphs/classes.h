@@ -1,7 +1,7 @@
 #ifndef CLASSES_H
 #define CLASSES_H
 
-#include <vector>
+#include <stack>
 #include <stdint.h>
 
 using namespace std;
@@ -14,6 +14,11 @@ struct Cruise
     uint32_t cruise_time;
     uint32_t cruise_cost;
 
+    Cruise()
+    {
+
+    };
+
     Cruise(uint32_t f_id, uint32_t t_id, uint32_t v_id, uint32_t t, uint32_t c)
     {
         from_id = f_id;
@@ -22,45 +27,47 @@ struct Cruise
         cruise_time = t;
         cruise_cost = c;
     }
+
+    Cruise(const Cruise &cruise)
+    {
+        from_id = cruise.from_id;
+        to_id = cruise.to_id;
+        vehicle_id = cruise.vehicle_id;
+        cruise_time = cruise.cruise_time;
+        cruise_cost = cruise.cruise_cost;
+    }
 };
 
-struct InversedTrip
+struct Trip
 {
-    vector<uint32_t> stations_list;
-    uint32_t trip_time;
-    uint32_t trip_cost;
-    uint32_t stations_num;
+    stack<Cruise> cruises_stack;
 
-    InversedTrip()
+    Trip operator+(Cruise &cruise)
     {
-        trip_time = 0;
-        trip_cost = 0;
-        stations_num = 0;
-    }
-
-    InversedTrip(const Cruise& cruise)
-    {
-        stations_list = {cruise.to_id, cruise.from_id};
-        trip_time = cruise.cruise_time;
-        trip_cost = cruise.cruise_cost;
-        stations_num = 2;
-    }
-
-    InversedTrip& operator+=(const InversedTrip& x)
-    {
-        for (uint32_t i = 0; i < x.stations_num; i++)
-        {
-            stations_list.push_back(x.stations_list[i]);
-        }
-        stations_num += x.stations_num;
-        trip_time += x.trip_time;
-        trip_time += x.trip_cost;
+        cruises_stack.push(cruise);
         return *this;
     }
 
-    uint32_t& operator[](uint32_t index)
+    Trip operator+=(Cruise &cruise)
     {
-        return stations_list[stations_num - index - 1];
+        return *this + cruise;
+    }
+
+    // Cruise& operator[](uint32_t index)
+    // {
+
+    // };
+
+    Cruise next()
+    {
+        Cruise top = cruises_stack.top();
+        cruises_stack.pop();
+        return top;
+    }
+
+    bool finished()
+    {
+        return cruises_stack.empty();
     }
 };
 
