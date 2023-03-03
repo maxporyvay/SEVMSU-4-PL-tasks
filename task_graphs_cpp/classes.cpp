@@ -1,10 +1,5 @@
 #include "classes.h"
 
-#include <stack>
-#include <stdint.h>
-
-using namespace std;
-
 Cruise::Cruise()
 {
 
