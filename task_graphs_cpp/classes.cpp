@@ -23,9 +23,15 @@ Cruise::Cruise(const Cruise &cruise)
     cruise_cost = cruise.cruise_cost;
 }
 
+Trip::Trip()
+{
+    cruises_num = 0;
+}
+
 Trip Trip::operator+(Cruise &cruise)
 {
-    cruises_stack.push(cruise);
+    cruises_vector.push_back(cruise);
+    cruises_num++;
     return *this;
 }
 
@@ -34,19 +40,7 @@ Trip Trip::operator+=(Cruise &cruise)
     return *this + cruise;
 }
 
-// Cruise& Trip::operator[](uint32_t index)
-// {
-
-// };
-
-Cruise Trip::next()
+Cruise& Trip::operator[](uint32_t index)
 {
-    Cruise top = cruises_stack.top();
-    cruises_stack.pop();
-    return top;
-}
-
-bool Trip::finished()
-{
-    return cruises_stack.empty();
+    return cruises_vector[cruises_num - index - 1];
 }

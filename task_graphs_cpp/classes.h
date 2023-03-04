@@ -1,7 +1,7 @@
 #ifndef CLASSES_H
 #define CLASSES_H
 
-#include <stack>
+#include <vector>
 #include <stdint.h>
 
 using namespace std;
@@ -23,17 +23,17 @@ struct Cruise
 
 struct Trip
 {
-    stack<Cruise> cruises_stack;
+    vector<Cruise> cruises_vector;
+
+    uint32_t cruises_num;
+
+    Trip();
 
     Trip operator+(Cruise &cruise);
 
     Trip operator+=(Cruise &cruise);
 
-    // Cruise& operator[](uint32_t index);
-
-    Cruise next();
-
-    bool finished();
+    Cruise& operator[](uint32_t index);
 };
 
 #endif

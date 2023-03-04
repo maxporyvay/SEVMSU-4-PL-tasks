@@ -200,11 +200,10 @@ int main(int argc, char** argv)
                     current_station = next_cruise.from_id;
                 }
                 
-                uint32_t count = 1;
-                while (!trip->finished())
+                for (uint32_t count = 0; count < trip->cruises_num; count++)
                 {
-                    Cruise cruise = trip->next();
-                    cout << count++ << ") ";
+                    Cruise cruise = (*trip)[count];
+                    cout << (count + 1) << ") ";
                     cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
                     cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
                 }
@@ -232,11 +231,10 @@ int main(int argc, char** argv)
                     current_station = next_cruise.from_id;
                 }
                 
-                uint32_t count = 1;
-                while (!trip->finished())
+                for (uint32_t count = 0; count < trip->cruises_num; count++)
                 {
-                    Cruise cruise = trip->next();
-                    cout << count++ << ") ";
+                    Cruise cruise = (*trip)[count];
+                    cout << (count + 1) << ") ";
                     cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
                     cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
                 }
@@ -264,11 +262,10 @@ int main(int argc, char** argv)
                     current_station = next_cruise.from_id;
                 }
                 
-                uint32_t count = 1;
-                while (!trip->finished())
+                for (uint32_t count = 0; count < trip->cruises_num; count++)
                 {
-                    Cruise cruise = trip->next();
-                    cout << count++ << ") ";
+                    Cruise cruise = (*trip)[count];
+                    cout << (count + 1) << ") ";
                     cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
                     cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
                 }
@@ -302,11 +299,10 @@ int main(int argc, char** argv)
                             current_station = next_cruise.from_id;
                         }
 
-                        uint32_t count = 1;
-                        while (!trip->finished())
+                        for (uint32_t count = 0; count < trip->cruises_num; count++)
                         {
-                            Cruise cruise = trip->next();
-                            cout << count++ << ") ";
+                            Cruise cruise = (*trip)[count];
+                            cout << (count + 1) << ") ";
                             cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
                             cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
                         }
@@ -342,11 +338,10 @@ int main(int argc, char** argv)
                             current_station = next_cruise.from_id;
                         }
 
-                        uint32_t count = 1;
-                        while (!trip->finished())
+                        for (uint32_t count = 0; count < trip->cruises_num; count++)
                         {
-                            Cruise cruise = trip->next();
-                            cout << count++ << ") ";
+                            Cruise cruise = (*trip)[count];
+                            cout << (count + 1) << ") ";
                             cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
                             cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
                         }
@@ -357,7 +352,7 @@ int main(int argc, char** argv)
             }
             default:
             {
-                cout << "Not valid task type" << endl;
+                cout << "Not valid task type. Please enter 1/2/3/4/5 or 'quit'" << endl;
                 continue;
             }
         }
