@@ -206,6 +206,7 @@ int main(int argc, char** argv)
                     cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
                     cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
                 }
+                delete trip;
                 continue;
             }
             case 2:
@@ -235,6 +236,7 @@ int main(int argc, char** argv)
                     cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
                     cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
                 }
+                delete trip;
                 continue;
             }
             case 3:
@@ -264,6 +266,7 @@ int main(int argc, char** argv)
                     cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
                     cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
                 }
+                delete trip;
                 continue;
             }
             case 4:
@@ -299,6 +302,7 @@ int main(int argc, char** argv)
                             cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
                             cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
                         }
+                        delete trip;
                     }
                 }
                 continue;
@@ -336,6 +340,7 @@ int main(int argc, char** argv)
                             cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
                             cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
                         }
+                        delete trip;
                     }
                 }
                 continue;
@@ -348,6 +353,18 @@ int main(int argc, char** argv)
         }
     }
     cout << "Good Bye!" << endl;
+
+    for (auto pair : graph)
+    {
+        for (auto p : pair.second)
+        {
+            vector<Cruise*> cruises = p.second;
+            for (auto cruise : cruises)
+            {
+                delete cruise;
+            }
+        }
+    }
 
     return 0;
 }
