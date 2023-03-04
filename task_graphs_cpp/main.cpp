@@ -159,7 +159,7 @@ int main(int argc, char** argv)
     {
         cout << "Enter task type (1/2/3/4/5) or 'quit' if you want to quit> ";
         string task_type_str;
-        cin >> task_type_str;
+        getline(cin, task_type_str);
         if (task_type_str == "quit")
         {
             break;
@@ -167,14 +167,14 @@ int main(int argc, char** argv)
         uint32_t task_type = stoi(task_type_str);
         string vehicles_types_num_str;
         cout << "Enter wanted vehicles types number> ";
-        cin >> vehicles_types_num_str;
+        getline(cin, vehicles_types_num_str);
         uint32_t vehicles_types_num = stoi(vehicles_types_num_str);
-        cout << "Enter wanted vehicles types splitted by spaces> ";
         unordered_set<uint32_t> vehicles_types;
-        for (uint32_t i = 0; i < vehicles_types_num; i++)
+        for (uint32_t i = 1; i <= vehicles_types_num; i++)
         {
+            cout << "Enter wanted vehicle type #" << i << "> ";
             string vehicle_type;
-            cin >> vehicle_type;
+            getline(cin, vehicle_type);
             vehicles_types.insert(vehicle_name_to_id[vehicle_type]);
         }
         switch (task_type)
@@ -182,8 +182,10 @@ int main(int argc, char** argv)
             case 1:
             {
                 string station_from, station_to;
-                cout << "Enter station_from and station_to splitted by space> ";
-                cin >> station_from >> station_to;
+                cout << "Enter station_from> ";
+                getline(cin, station_from);
+                cout << "Enter station_to> ";
+                getline(cin, station_to);
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
                 to_id = station_name_to_id[station_to];
@@ -212,8 +214,10 @@ int main(int argc, char** argv)
             case 2:
             {
                 string station_from, station_to;
-                cout << "Enter station_from and station_to splitted by space> ";
-                cin >> station_from >> station_to;
+                cout << "Enter station_from> ";
+                getline(cin, station_from);
+                cout << "Enter station_to> ";
+                getline(cin, station_to);
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
                 to_id = station_name_to_id[station_to];
@@ -242,8 +246,10 @@ int main(int argc, char** argv)
             case 3:
             {
                 string station_from, station_to;
-                cout << "Enter station_from and station_to splitted by space> ";
-                cin >> station_from >> station_to;
+                cout << "Enter station_from> ";
+                getline(cin, station_from);
+                cout << "Enter station_to> ";
+                getline(cin, station_to);
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
                 to_id = station_name_to_id[station_to];
@@ -272,8 +278,10 @@ int main(int argc, char** argv)
             case 4:
             {
                 string station_from, limit_cost_str;
-                cout << "Enter station_from and limit_cost splitted by space> ";
-                cin >> station_from >> limit_cost_str;
+                cout << "Enter station_from> ";
+                getline(cin, station_from);
+                cout << "Enter limit_cost> ";
+                getline(cin, limit_cost_str);
                 uint32_t from_id, limit_cost;
                 from_id = station_name_to_id[station_from];
                 limit_cost = stoi(limit_cost_str);
@@ -310,8 +318,10 @@ int main(int argc, char** argv)
             case 5:
             {
                 string station_from, limit_time_str;
-                cout << "Enter station_from and limit_time splitted by space> ";
-                cin >> station_from >> limit_time_str;
+                cout << "Enter station_from> ";
+                getline(cin, station_from);
+                cout << "Enter limit_time> ";
+                getline(cin, limit_time_str);
                 uint32_t from_id, limit_time;
                 from_id = station_name_to_id[station_from];
                 limit_time = stoi(limit_time_str);
