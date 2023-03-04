@@ -11,6 +11,7 @@
 #include <unordered_set>
 #include <stdint.h>
 #include <tuple>
+#include <time.h>
 
 using namespace std;
 
@@ -22,10 +23,12 @@ map<string, uint32_t> vehicle_name_to_id;
 map<uint32_t, string> vehicle_id_to_name;
 uint32_t next_vehicle_id = 0;
 
-map<uint32_t, map<uint32_t, vector<Cruise*>>> graph;
+Graph graph;
 
 int main(int argc, char** argv)
 {  
+    time_t start_program = time(NULL);
+
     ifstream in("input.txt");
     string line;
     if (in.is_open())
@@ -181,6 +184,8 @@ int main(int argc, char** argv)
         {
             case 1:
             {
+                //time_t start_operation = time(NULL);
+
                 string station_from, station_to;
                 cout << "Enter station_from> ";
                 getline(cin, station_from);
@@ -208,10 +213,13 @@ int main(int argc, char** argv)
                     cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
                 }
                 delete trip;
+                //cout << "Operation time: " << (time(NULL) - start_operation) << endl;
                 continue;
             }
             case 2:
             {
+                //time_t start_operation = time(NULL);
+
                 string station_from, station_to;
                 cout << "Enter station_from> ";
                 getline(cin, station_from);
@@ -239,10 +247,13 @@ int main(int argc, char** argv)
                     cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
                 }
                 delete trip;
+                //cout << "Operation time: " << (time(NULL) - start_operation) << endl;
                 continue;
             }
             case 3:
             {
+                //time_t start_operation = time(NULL);
+
                 string station_from, station_to;
                 cout << "Enter station_from> ";
                 getline(cin, station_from);
@@ -270,10 +281,13 @@ int main(int argc, char** argv)
                     cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
                 }
                 delete trip;
+                //cout << "Operation time: " << (time(NULL) - start_operation) << endl;
                 continue;
             }
             case 4:
             {
+                //time_t start_operation = time(NULL);
+
                 string station_from, limit_cost_str;
                 cout << "Enter station_from> ";
                 getline(cin, station_from);
@@ -309,10 +323,13 @@ int main(int argc, char** argv)
                         delete trip;
                     }
                 }
+                //cout << "Operation time: " << (time(NULL) - start_operation) << endl;
                 continue;
             }
             case 5:
             {
+                //time_t start_operation = time(NULL);
+
                 string station_from, limit_time_str;
                 cout << "Enter station_from> ";
                 getline(cin, station_from);
@@ -348,6 +365,7 @@ int main(int argc, char** argv)
                         delete trip;
                     }
                 }
+                //cout << "Operation time: " << (time(NULL) - start_operation) << endl;
                 continue;
             }
             default:
@@ -358,6 +376,9 @@ int main(int argc, char** argv)
         }
     }
     cout << "Good Bye!" << endl;
+    time_t end_program = time(NULL);
+    cout << end_program << " " << start_program << endl;
+    cout << "Program time: " << (end_program - start_program) << endl;
 
     for (auto pair : graph)
     {
