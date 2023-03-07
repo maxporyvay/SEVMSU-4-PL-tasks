@@ -184,7 +184,7 @@ int main(int argc, char** argv)
                 std::cout << "Operation time: " << operation_time.count() << " seconds" << std::endl;
 
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
-                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << std::endl;
+                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << "KiB" << std::endl;
                 
                 for (uint32_t count = 0; count < trip.cruises_num; count++)
                 {
@@ -222,7 +222,7 @@ int main(int argc, char** argv)
                 std::cout << "Operation time: " << operation_time.count() << " seconds" << std::endl;
 
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
-                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << std::endl;
+                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << "KiB" << std::endl;
                 
                 for (uint32_t count = 0; count < trip.cruises_num; count++)
                 {
@@ -260,7 +260,7 @@ int main(int argc, char** argv)
                 std::cout << "Operation time: " << operation_time.count() << " seconds" << std::endl;
 
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
-                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << std::endl;
+                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << "KiB" << std::endl;
                 
                 for (uint32_t count = 0; count < trip.cruises_num; count++)
                 {
@@ -306,7 +306,7 @@ int main(int argc, char** argv)
                 std::cout << "Operation time: " << operation_time.count() << " seconds" << std::endl;
 
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
-                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << std::endl;
+                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << "KiB" << std::endl;
 
                 for (auto station_from_and_trip : trips_map)
                 {
@@ -360,7 +360,7 @@ int main(int argc, char** argv)
                 std::cout << "Operation time: " << operation_time.count() << " seconds" << std::endl;
 
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
-                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << std::endl;
+                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << "KiB" << std::endl;
 
                 for (auto station_from_and_trip : trips_map)
                 {
@@ -393,7 +393,7 @@ int main(int argc, char** argv)
     std::cout << "Program duration: " << program_duration.count() << " seconds" << std::endl;
 
     if (getrusage(RUSAGE_SELF, &rusage) != -1)
-        std::cout << "Max RSS: " << (double)rusage.ru_maxrss << std::endl;
+        std::cout << "Max RSS: " << (double)rusage.ru_maxrss << "KiB" << std::endl;
 
     return 0;
 }
