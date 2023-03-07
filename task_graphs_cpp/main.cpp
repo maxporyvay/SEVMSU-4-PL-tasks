@@ -154,7 +154,15 @@ int main(int argc, char** argv)
             std::cout << "Введите допустимый вид транспорта #" << i << "> ";
             std::string vehicle_type;
             getline(std::cin, vehicle_type);
-            vehicles_types.insert(vehicle_name_to_id[vehicle_type]);
+            if (vehicle_name_to_id.find(vehicle_type) != vehicle_name_to_id.end())
+            {
+                vehicles_types.insert(vehicle_name_to_id[vehicle_type]);
+            }
+            else
+            {
+                std::cout << "Введен недопустимый вид транспорта. Повторите ввод" << std::endl;
+                i--;
+            }
         }
         switch (task_type)
         {
@@ -163,8 +171,20 @@ int main(int argc, char** argv)
                 std::string station_from, station_to;
                 std::cout << "Введите станцию отправления> ";
                 getline(std::cin, station_from);
+                while (station_name_to_id.find(station_from) == station_name_to_id.end())
+                {
+                    std::cout << "Введена недопустимая станция отправления. Повторите ввод" << std::endl;
+                    std::cout << "Введите станцию отправления> ";
+                    getline(std::cin, station_from);
+                }
                 std::cout << "Введите станцию прибытия> ";
                 getline(std::cin, station_to);
+                while (station_name_to_id.find(station_to) == station_name_to_id.end())
+                {
+                    std::cout << "Введена недопустимая станция прибытия. Повторите ввод" << std::endl;
+                    std::cout << "Введите станцию прибытия> ";
+                    getline(std::cin, station_to);
+                }
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
                 to_id = station_name_to_id[station_to];
@@ -201,8 +221,20 @@ int main(int argc, char** argv)
                 std::string station_from, station_to;
                 std::cout << "Введите станцию отправления> ";
                 getline(std::cin, station_from);
+                while (station_name_to_id.find(station_from) == station_name_to_id.end())
+                {
+                    std::cout << "Введена недопустимая станция отправления. Повторите ввод" << std::endl;
+                    std::cout << "Введите станцию отправления> ";
+                    getline(std::cin, station_from);
+                }
                 std::cout << "Введите станцию прибытия> ";
                 getline(std::cin, station_to);
+                while (station_name_to_id.find(station_to) == station_name_to_id.end())
+                {
+                    std::cout << "Введена недопустимая станция прибытия. Повторите ввод" << std::endl;
+                    std::cout << "Введите станцию прибытия> ";
+                    getline(std::cin, station_to);
+                }
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
                 to_id = station_name_to_id[station_to];
@@ -239,8 +271,20 @@ int main(int argc, char** argv)
                 std::string station_from, station_to;
                 std::cout << "Введите станцию отправления> ";
                 getline(std::cin, station_from);
+                while (station_name_to_id.find(station_from) == station_name_to_id.end())
+                {
+                    std::cout << "Введена недопустимая станция отправления. Повторите ввод" << std::endl;
+                    std::cout << "Введите станцию отправления> ";
+                    getline(std::cin, station_from);
+                }
                 std::cout << "Введите станцию прибытия> ";
                 getline(std::cin, station_to);
+                while (station_name_to_id.find(station_to) == station_name_to_id.end())
+                {
+                    std::cout << "Введена недопустимая станция прибытия. Повторите ввод" << std::endl;
+                    std::cout << "Введите станцию прибытия> ";
+                    getline(std::cin, station_to);
+                }
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
                 to_id = station_name_to_id[station_to];
@@ -277,6 +321,12 @@ int main(int argc, char** argv)
                 std::string station_from, limit_cost_str;
                 std::cout << "Введите станцию отправления> ";
                 getline(std::cin, station_from);
+                while (station_name_to_id.find(station_from) == station_name_to_id.end())
+                {
+                    std::cout << "Введена недопустимая станция отправления. Повторите ввод" << std::endl;
+                    std::cout << "Введите станцию отправления> ";
+                    getline(std::cin, station_from);
+                }
                 std::cout << "Введите лимит стоимости> ";
                 getline(std::cin, limit_cost_str);
                 uint32_t from_id, limit_cost;
@@ -331,6 +381,12 @@ int main(int argc, char** argv)
                 std::string station_from, limit_time_str;
                 std::cout << "Введите станцию отправления> ";
                 getline(std::cin, station_from);
+                while (station_name_to_id.find(station_from) == station_name_to_id.end())
+                {
+                    std::cout << "Введена недопустимая станция отправления. Повторите ввод" << std::endl;
+                    std::cout << "Введите станцию отправления> ";
+                    getline(std::cin, station_from);
+                }
                 std::cout << "Введите лимит времени> ";
                 getline(std::cin, limit_time_str);
                 uint32_t from_id, limit_time;
