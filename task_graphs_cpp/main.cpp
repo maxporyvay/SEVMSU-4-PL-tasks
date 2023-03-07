@@ -1,36 +1,28 @@
-#include "algorithms.h"
-#include "classes.h"
+#include "algorithms.hpp"
+#include "classes.hpp"
 
 #include <iostream>
 #include <fstream>
-#include <string>
-#include <map>
-#include <utility>
-#include <vector>
-#include <queue>
-#include <unordered_set>
-#include <stdint.h>
-#include <tuple>
 #include <time.h>
+#include <sys/resource.h>
 
-using namespace std;
-
-map<string, uint32_t> station_name_to_id;
-map<uint32_t, string> station_id_to_name;
-uint32_t next_station_id = 0;
-
-map<string, uint32_t> vehicle_name_to_id;
-map<uint32_t, string> vehicle_id_to_name;
-uint32_t next_vehicle_id = 0;
-
-Graph graph;
 
 int main(int argc, char** argv)
 {  
     time_t start_program = time(NULL);
 
-    ifstream in("input.txt");
-    string line;
+    std::map<std::string, uint32_t> station_name_to_id;
+    std::map<uint32_t, std::string> station_id_to_name;
+    uint32_t next_station_id = 0;
+
+    std::map<std::string, uint32_t> vehicle_name_to_id;
+    std::map<uint32_t, std::string> vehicle_id_to_name;
+    uint32_t next_vehicle_id = 0;
+
+    CruisesGraph graph;
+
+    std::ifstream in("input.txt");
+    std::string line;
     if (in.is_open())
     {
         while (getline(in, line))
@@ -38,11 +30,11 @@ int main(int argc, char** argv)
             if (line[0] != '#')
             {
                 line += ' ';
-                string words[3];
-                string nums[2];
+                std::string words[3];
+                std::string nums[2];
                 bool parsing_word = false;
                 bool parsing_num = false;
-                string current_word = "";
+                std::string current_word = "";
                 uint32_t word_count = 0;
                 uint32_t num_count = 0;
                 for (char sym : line)
@@ -88,11 +80,11 @@ int main(int argc, char** argv)
                         current_word += sym;
                     }
                 }
-                string from = words[0];
-                string to = words[1];
-                string vehicle = words[2];
-                string time_str = nums[0];
-                string cost_str = nums[1];
+                std::string from = words[0];
+                std::string to = words[1];
+                std::string vehicle = words[2];
+                std::string time_str = nums[0];
+                std::string cost_str = nums[1];
                 if (from != "")
                 {
                     uint32_t cruise_time = stoi(time_str);
@@ -117,26 +109,8 @@ int main(int argc, char** argv)
                         next_vehicle_id++;
                     }
 
-                    Cruise *new_cruise = new Cruise(station_name_to_id[from], station_name_to_id[to], vehicle_name_to_id[vehicle], cruise_time, cruise_cost);
-
-                    if (graph.find(station_name_to_id[from]) == graph.end())
-                    {
-                        map<uint32_t, vector<Cruise*>> in_map;
-                        vector<Cruise*> in_vec;
-                        in_vec.push_back(new_cruise);
-                        in_map[station_name_to_id[to]] = in_vec;
-                        graph[station_name_to_id[from]] = in_map;
-                    }
-                    else if (graph[station_name_to_id[from]].find(station_name_to_id[to]) == graph[station_name_to_id[from]].end())
-                    {
-                        vector<Cruise*> in_vec;
-                        in_vec.push_back(new_cruise);
-                        graph[station_name_to_id[from]][station_name_to_id[to]] = in_vec;
-                    }
-                    else
-                    {
-                        graph[station_name_to_id[from]][station_name_to_id[to]].push_back(new_cruise);
-                    }    
+                    Cruise new_cruise(station_name_to_id[from], station_name_to_id[to], vehicle_name_to_id[vehicle], cruise_time, cruise_cost);
+                    graph.insertCruise(new_cruise);
                 }
             }
         }
@@ -145,39 +119,39 @@ int main(int argc, char** argv)
 
     // for (auto pair : graph)
     // {
-    //     cout << station_id_to_name[pair.first] << ": ";
+    //     std::cout << station_id_to_name[pair.first] << ": ";
     //     for (auto p : pair.second)
     //     {
-    //         cout << station_id_to_name[p.first];
-    //         vector<Cruise*> cruises = p.second;
+    //         std::cout << station_id_to_name[p.first];
+    //         std::vector<Cruise*> cruises = p.second;
     //         for (auto cruise : cruises)
     //         {
-    //             cout << " (" << station_id_to_name[cruise->from_id] << " " << station_id_to_name[cruise->to_id] << " " << vehicle_id_to_name[cruise->vehicle_id] << " " << cruise->cruise_time << " " << cruise->cruise_cost << "), ";
+    //             std::cout << " (" << station_id_to_name[cruise->from_id] << " " << station_id_to_name[cruise->to_id] << " " << vehicle_id_to_name[cruise->vehicle_id] << " " << cruise->cruise_time << " " << cruise->cruise_cost << "), ";
     //         }
     //     }
-    //     cout << endl;
+    //     std::cout << std::endl;
     // }
 
     for (;;)
     {
-        cout << "Enter task type (1/2/3/4/5) or 'quit' if you want to quit> ";
-        string task_type_str;
-        getline(cin, task_type_str);
+        std::cout << "Enter task type (1/2/3/4/5) or 'quit' if you want to quit> ";
+        std::string task_type_str;
+        getline(std::cin, task_type_str);
         if (task_type_str == "quit")
         {
             break;
         }
         uint32_t task_type = stoi(task_type_str);
-        string vehicles_types_num_str;
-        cout << "Enter wanted vehicles types number> ";
-        getline(cin, vehicles_types_num_str);
+        std::string vehicles_types_num_str;
+        std::cout << "Enter wanted vehicles types number> ";
+        getline(std::cin, vehicles_types_num_str);
         uint32_t vehicles_types_num = stoi(vehicles_types_num_str);
-        unordered_set<uint32_t> vehicles_types;
+        std::unordered_set<uint32_t> vehicles_types;
         for (uint32_t i = 1; i <= vehicles_types_num; i++)
         {
-            cout << "Enter wanted vehicle type #" << i << "> ";
-            string vehicle_type;
-            getline(cin, vehicle_type);
+            std::cout << "Enter wanted vehicle type #" << i << "> ";
+            std::string vehicle_type;
+            getline(std::cin, vehicle_type);
             vehicles_types.insert(vehicle_name_to_id[vehicle_type]);
         }
         switch (task_type)
@@ -186,211 +160,194 @@ int main(int argc, char** argv)
             {
                 //time_t start_operation = time(NULL);
 
-                string station_from, station_to;
-                cout << "Enter station_from> ";
-                getline(cin, station_from);
-                cout << "Enter station_to> ";
-                getline(cin, station_to);
+                std::string station_from, station_to;
+                std::cout << "Enter station_from> ";
+                getline(std::cin, station_from);
+                std::cout << "Enter station_to> ";
+                getline(std::cin, station_to);
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
                 to_id = station_name_to_id[station_to];
-                tuple<vector<uint32_t>, vector<uint32_t>, vector<Cruise>> d_extra_p = dijkstra_extra_cond(from_id, next_station_id, graph, 0, vehicles_types);
+                std::tuple<std::vector<uint32_t>, std::vector<uint32_t>, std::vector<Cruise>> d_extra_p = dijkstra_extra_cond(from_id, next_station_id, graph, 0, vehicles_types);
 
-                Trip *trip = new Trip();
+                Trip trip;
                 uint32_t current_station = to_id;
                 while (current_station != from_id)
                 {
-                    Cruise next_cruise = get<2>(d_extra_p)[current_station];
-                    *trip += next_cruise;
+                    Cruise next_cruise = std::get<2>(d_extra_p)[current_station];
+                    trip += next_cruise;
                     current_station = next_cruise.from_id;
                 }
                 
-                for (uint32_t count = 0; count < trip->cruises_num; count++)
+                for (uint32_t count = 0; count < trip.cruises_num; count++)
                 {
-                    Cruise cruise = (*trip)[count];
-                    cout << (count + 1) << ") ";
-                    cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
-                    cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
+                    Cruise cruise = trip[count];
+                    std::cout << (count + 1) << ") ";
+                    std::cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
+                    std::cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << std::endl;
                 }
-                delete trip;
-                //cout << "Operation time: " << (time(NULL) - start_operation) << endl;
+                //std::cout << "Operation time: " << (time(NULL) - start_operation) << std::endl;
                 continue;
             }
             case 2:
             {
                 //time_t start_operation = time(NULL);
 
-                string station_from, station_to;
-                cout << "Enter station_from> ";
-                getline(cin, station_from);
-                cout << "Enter station_to> ";
-                getline(cin, station_to);
+                std::string station_from, station_to;
+                std::cout << "Enter station_from> ";
+                getline(std::cin, station_from);
+                std::cout << "Enter station_to> ";
+                getline(std::cin, station_to);
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
                 to_id = station_name_to_id[station_to];
-                pair<vector<uint32_t>, vector<Cruise>> d_p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types);
+                std::pair<std::vector<uint32_t>, std::vector<Cruise>> d_p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types);
 
-                Trip *trip = new Trip();
+                Trip trip;
                 uint32_t current_station = to_id;
                 while (current_station != from_id)
                 {
                     Cruise next_cruise = d_p.second[current_station];
-                    *trip += next_cruise;
+                    trip += next_cruise;
                     current_station = next_cruise.from_id;
                 }
                 
-                for (uint32_t count = 0; count < trip->cruises_num; count++)
+                for (uint32_t count = 0; count < trip.cruises_num; count++)
                 {
-                    Cruise cruise = (*trip)[count];
-                    cout << (count + 1) << ") ";
-                    cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
-                    cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
+                    Cruise cruise = trip[count];
+                    std::cout << (count + 1) << ") ";
+                    std::cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
+                    std::cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << std::endl;
                 }
-                delete trip;
-                //cout << "Operation time: " << (time(NULL) - start_operation) << endl;
+                //std::cout << "Operation time: " << (time(NULL) - start_operation) << std::endl;
                 continue;
             }
             case 3:
             {
                 //time_t start_operation = time(NULL);
 
-                string station_from, station_to;
-                cout << "Enter station_from> ";
-                getline(cin, station_from);
-                cout << "Enter station_to> ";
-                getline(cin, station_to);
+                std::string station_from, station_to;
+                std::cout << "Enter station_from> ";
+                getline(std::cin, station_from);
+                std::cout << "Enter station_to> ";
+                getline(std::cin, station_to);
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
                 to_id = station_name_to_id[station_to];
-                pair<vector<uint32_t>, vector<Cruise>> d_p = bfs(from_id, next_station_id, graph, vehicles_types);
+                std::pair<std::vector<uint32_t>, std::vector<Cruise>> d_p = bfs(from_id, next_station_id, graph, vehicles_types);
 
-                Trip *trip = new Trip();
+                Trip trip;
                 uint32_t current_station = to_id;
                 while (current_station != from_id)
                 {
                     Cruise next_cruise = d_p.second[current_station];
-                    *trip += next_cruise;
+                    trip += next_cruise;
                     current_station = next_cruise.from_id;
                 }
                 
-                for (uint32_t count = 0; count < trip->cruises_num; count++)
+                for (uint32_t count = 0; count < trip.cruises_num; count++)
                 {
-                    Cruise cruise = (*trip)[count];
-                    cout << (count + 1) << ") ";
-                    cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
-                    cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
+                    Cruise cruise = trip[count];
+                    std::cout << (count + 1) << ") ";
+                    std::cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
+                    std::cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << std::endl;
                 }
-                delete trip;
-                //cout << "Operation time: " << (time(NULL) - start_operation) << endl;
+                //std::cout << "Operation time: " << (time(NULL) - start_operation) << std::endl;
                 continue;
             }
             case 4:
             {
                 //time_t start_operation = time(NULL);
 
-                string station_from, limit_cost_str;
-                cout << "Enter station_from> ";
-                getline(cin, station_from);
-                cout << "Enter limit_cost> ";
-                getline(cin, limit_cost_str);
+                std::string station_from, limit_cost_str;
+                std::cout << "Enter station_from> ";
+                getline(std::cin, station_from);
+                std::cout << "Enter limit_cost> ";
+                getline(std::cin, limit_cost_str);
                 uint32_t from_id, limit_cost;
                 from_id = station_name_to_id[station_from];
                 limit_cost = stoi(limit_cost_str);
-                pair<vector<uint32_t>, vector<Cruise>> d_p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types);
+                std::pair<std::vector<uint32_t>, std::vector<Cruise>> d_p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types);
 
                 for (uint32_t i = 0; i < next_station_id; i++)
                 {
                     if (i != from_id && d_p.first[i] <= limit_cost)
                     {
-                        cout << "To " << station_id_to_name[i] << ":" << endl;
+                        std::cout << "To " << station_id_to_name[i] << ":" << std::endl;
 
-                        Trip *trip = new Trip();
+                        Trip trip;
                         uint32_t current_station = i;
                         while (current_station != from_id)
                         {
                             Cruise next_cruise = d_p.second[current_station];
-                            *trip += next_cruise;
+                            trip += next_cruise;
                             current_station = next_cruise.from_id;
                         }
 
-                        for (uint32_t count = 0; count < trip->cruises_num; count++)
+                        for (uint32_t count = 0; count < trip.cruises_num; count++)
                         {
-                            Cruise cruise = (*trip)[count];
-                            cout << (count + 1) << ") ";
-                            cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
-                            cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
+                            Cruise cruise = trip[count];
+                            std::cout << (count + 1) << ") ";
+                            std::cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
+                            std::cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << std::endl;
                         }
-                        delete trip;
                     }
                 }
-                //cout << "Operation time: " << (time(NULL) - start_operation) << endl;
+                //std::cout << "Operation time: " << (time(NULL) - start_operation) << std::endl;
                 continue;
             }
             case 5:
             {
                 //time_t start_operation = time(NULL);
 
-                string station_from, limit_time_str;
-                cout << "Enter station_from> ";
-                getline(cin, station_from);
-                cout << "Enter limit_time> ";
-                getline(cin, limit_time_str);
+                std::string station_from, limit_time_str;
+                std::cout << "Enter station_from> ";
+                getline(std::cin, station_from);
+                std::cout << "Enter limit_time> ";
+                getline(std::cin, limit_time_str);
                 uint32_t from_id, limit_time;
                 from_id = station_name_to_id[station_from];
                 limit_time = stoi(limit_time_str);
-                pair<vector<uint32_t>, vector<Cruise>> d_p = dijkstra(from_id, next_station_id, graph, 0, vehicles_types);
+                std::pair<std::vector<uint32_t>, std::vector<Cruise>> d_p = dijkstra(from_id, next_station_id, graph, 0, vehicles_types);
 
                 for (uint32_t i = 0; i < next_station_id; i++)
                 {
                     if (i != from_id && d_p.first[i] <= limit_time)
                     {
-                        cout << "To " << station_id_to_name[i] << ":" << endl;
+                        std::cout << "To " << station_id_to_name[i] << ":" << std::endl;
 
-                        Trip *trip = new Trip();
+                        Trip trip;
                         uint32_t current_station = i;
                         while (current_station != from_id)
                         {
                             Cruise next_cruise = d_p.second[current_station];
-                            *trip += next_cruise;
+                            trip += next_cruise;
                             current_station = next_cruise.from_id;
                         }
 
-                        for (uint32_t count = 0; count < trip->cruises_num; count++)
+                        for (uint32_t count = 0; count < trip.cruises_num; count++)
                         {
-                            Cruise cruise = (*trip)[count];
-                            cout << (count + 1) << ") ";
-                            cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
-                            cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << endl;
+                            Cruise cruise = trip[count];
+                            std::cout << (count + 1) << ") ";
+                            std::cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
+                            std::cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << std::endl;
                         }
-                        delete trip;
                     }
                 }
-                //cout << "Operation time: " << (time(NULL) - start_operation) << endl;
+                //std::cout << "Operation time: " << (time(NULL) - start_operation) << std::endl;
                 continue;
             }
             default:
             {
-                cout << "Not valid task type. Please enter 1/2/3/4/5 or 'quit'" << endl;
+                std::cout << "Not valid task type. Please enter 1/2/3/4/5 or 'quit'" << std::endl;
                 continue;
             }
         }
     }
-    cout << "Good Bye!" << endl;
+    std::cout << "Good Bye!" << std::endl;
     time_t end_program = time(NULL);
-    cout << end_program << " " << start_program << endl;
-    cout << "Program time: " << (end_program - start_program) << endl;
-
-    for (auto pair : graph)
-    {
-        for (auto p : pair.second)
-        {
-            vector<Cruise*> cruises = p.second;
-            for (auto cruise : cruises)
-            {
-                delete cruise;
-            }
-        }
-    }
+    std::cout << end_program << " " << start_program << std::endl;
+    std::cout << "Program time: " << (end_program - start_program) << std::endl;
 
     return 0;
 }

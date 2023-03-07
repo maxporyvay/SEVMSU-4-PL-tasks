@@ -1,28 +1,28 @@
-#include "algorithms.h"
+#include "algorithms.hpp"
 
-pair<vector<uint32_t>, vector<Cruise>> bfs(uint32_t s, uint32_t n, map<uint32_t, map<uint32_t, vector<Cruise*>>> graph, unordered_set<uint32_t> vehicles_types)
+std::pair<std::vector<uint32_t>, std::vector<Cruise>> bfs(uint32_t s, uint32_t n, CruisesGraph graph, std::unordered_set<uint32_t> vehicles_types)
 {
-    queue<uint32_t> q;
+    std::queue<uint32_t> q;
     q.push(s);
     
-    vector<uint32_t> d(n, INF);
-    vector<Cruise> p(n);
+    std::vector<uint32_t> d(n, INF);
+    std::vector<Cruise> p(n);
     d[s] = 0;
     
     while (!q.empty()) {
         uint32_t v = q.front();
         q.pop();
-        for (pair<uint32_t, vector<Cruise*>> in_map : graph[v]) {
-            uint32_t u = in_map.first;
-            vector<Cruise*> cruises = in_map.second;
+        for (auto cruises_map : graph.getCruisesMapFromStation(v)) {
+            uint32_t u = cruises_map.first;
+            std::vector<Cruise> cruises = cruises_map.second;
             bool flag = false;
             Cruise best_cruise;
-            for (Cruise* cruise : cruises)
+            for (Cruise cruise : cruises)
             {
-                if (vehicles_types.find(cruise->vehicle_id) != vehicles_types.end())
+                if (vehicles_types.find(cruise.vehicle_id) != vehicles_types.end())
                 {
                     flag = true;
-                    best_cruise = *cruise;
+                    best_cruise = cruise;
                 }
             }
             if (flag && d[u] == INF) {
@@ -36,42 +36,42 @@ pair<vector<uint32_t>, vector<Cruise>> bfs(uint32_t s, uint32_t n, map<uint32_t,
     return {d, p};
 };
 
-pair<vector<uint32_t>, vector<Cruise>> dijkstra(uint32_t s, uint32_t n, map<uint32_t, map<uint32_t, vector<Cruise*>>> graph, uint32_t to_optimize, unordered_set<uint32_t> vehicles_types)
+std::pair<std::vector<uint32_t>, std::vector<Cruise>> dijkstra(uint32_t s, uint32_t n, CruisesGraph graph, uint32_t to_optimize, std::unordered_set<uint32_t> vehicles_types)
 {
-    vector<uint32_t> d(n, INF);
-    vector<Cruise> p(n);
+    std::vector<uint32_t> d(n, INF);
+    std::vector<Cruise> p(n);
     d[s] = 0;
-    priority_queue<Pair, vector<Pair>, greater<Pair>> q;
+    std::priority_queue<TwoInts, std::vector<TwoInts>, std::greater<TwoInts>> q;
     q.push({0, s});
     while (!q.empty())
     {
-        Pair top_pair = q.top();
+        TwoInts top_pair = q.top();
         uint32_t cur_d = top_pair.first;
         uint32_t v = top_pair.second;
         q.pop();
         if (cur_d > d[v])
             continue;
-        for (pair<uint32_t, vector<Cruise*>> in_map : graph[v])
+        for (auto cruises_map : graph.getCruisesMapFromStation(v))
         {
-            uint32_t u = in_map.first;
-            vector<Cruise*> cruises = in_map.second;
+            uint32_t u = cruises_map.first;
+            std::vector<Cruise> cruises = cruises_map.second;
             uint32_t min_w = INF;
             Cruise cruise_for_min_w;
-            for (Cruise* cruise : cruises)
+            for (Cruise cruise : cruises)
             {
                 uint32_t w;
                 if (to_optimize == 0)
                 {
-                    w = cruise->cruise_time;
+                    w = cruise.cruise_time;
                 }
                 else if (to_optimize == 1)
                 {
-                    w = cruise->cruise_cost;
+                    w = cruise.cruise_cost;
                 }
-                if (vehicles_types.find(cruise->vehicle_id) != vehicles_types.end() && w < min_w)
+                if (vehicles_types.find(cruise.vehicle_id) != vehicles_types.end() && w < min_w)
                 {
                     min_w = w;
-                    cruise_for_min_w = *cruise;
+                    cruise_for_min_w = cruise;
                 }
             }
             if (min_w < INF && d[u] > d[v] + min_w)
@@ -85,50 +85,50 @@ pair<vector<uint32_t>, vector<Cruise>> dijkstra(uint32_t s, uint32_t n, map<uint
     return {d, p};
 }
 
-tuple<vector<uint32_t>, vector<uint32_t>, vector<Cruise>> dijkstra_extra_cond(uint32_t s, uint32_t n, map<uint32_t, map<uint32_t, vector<Cruise*>>> graph, uint32_t to_optimize, unordered_set<uint32_t> vehicles_types)
+std::tuple<std::vector<uint32_t>, std::vector<uint32_t>, std::vector<Cruise>> dijkstra_extra_cond(uint32_t s, uint32_t n, CruisesGraph graph, uint32_t to_optimize, std::unordered_set<uint32_t> vehicles_types)
 {
-    vector<uint32_t> d(n, INF);
-    vector<uint32_t> extra(n, INF);
-    vector<Cruise> p(n);
+    std::vector<uint32_t> d(n, INF);
+    std::vector<uint32_t> extra(n, INF);
+    std::vector<Cruise> p(n);
     d[s] = 0;
     extra[s] = 0;
-    priority_queue<Triad, vector<Triad>, greater<Triad>> q;
+    std::priority_queue<ThreeInts, std::vector<ThreeInts>, std::greater<ThreeInts>> q;
     q.push({0, 0, s});
     while (!q.empty())
     {
-        Triad top_triad = q.top();
-        uint32_t cur_d = get<0>(top_triad);
-        uint32_t v = get<2>(top_triad);
+        ThreeInts top_triad = q.top();
+        uint32_t cur_d = std::get<0>(top_triad);
+        uint32_t v = std::get<2>(top_triad);
         q.pop();
         if (cur_d > d[v])
             continue;
-        for (pair<uint32_t, vector<Cruise*>> in_map : graph[v])
+        for (auto cruises_map : graph.getCruisesMapFromStation(v))
         {
-            uint32_t u = in_map.first;
-            vector<Cruise*> cruises = in_map.second;
+            uint32_t u = cruises_map.first;
+            std::vector<Cruise> cruises = cruises_map.second;
             uint32_t min_w = INF;
             uint32_t extra_for_min_w = INF;
             Cruise cruise_for_min_w;
-            for (Cruise* cruise : cruises)
+            for (Cruise cruise : cruises)
             {
                 uint32_t w, extra;
                 if (to_optimize == 0)
                 {
-                    w = cruise->cruise_time;
-                    extra = cruise->cruise_cost;
+                    w = cruise.cruise_time;
+                    extra = cruise.cruise_cost;
                 }
                 else if (to_optimize == 1)
                 {
-                    w = cruise->cruise_cost;
-                    extra = cruise->cruise_time;
+                    w = cruise.cruise_cost;
+                    extra = cruise.cruise_time;
                 }
-                if (vehicles_types.find(cruise->vehicle_id) != vehicles_types.end())
+                if (vehicles_types.find(cruise.vehicle_id) != vehicles_types.end())
                 {
                     if (w < min_w || w == min_w && extra < extra_for_min_w)
                     {
                         min_w = w;
                         extra_for_min_w = extra;
-                        cruise_for_min_w = *cruise;
+                        cruise_for_min_w = cruise;
                     }
                 }
             }
