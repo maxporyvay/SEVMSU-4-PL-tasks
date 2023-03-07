@@ -134,6 +134,13 @@ int main(int argc, char** argv)
     //     std::cout << std::endl;
     // }
 
+    std::cout << "Здравствуйте! Данная программа умеет отвечать на следующие типы запросов:" << std::endl;
+    std::cout << "1) Среди кратчайших по времени путей между двумя городами найти путь минимальной стоимости. Если город достижим из города отправления" << std::endl;
+    std::cout << "2) Среди путей между двумя городами найти путь минимальной стоимости. Если город достижим из города отправления" << std::endl;
+    std::cout << "3) Найти путь между 2-мя городами минимальный по числу посещённых городов" << std::endl;
+    std::cout << "4) Найти множество городов, достижимых из города отправления не более чем за limit_cost денег и вывести кратчайшие по деньгам пути к ним" << std::endl;
+    std::cout << "5) Найти множество городов, достижимых из города отправления не более чем за limit_time времени и вывести кратчайшие по времени пути к ним" << std::endl;
+
     for (;;)
     {
         std::cout << "Введите тип запроса (1/2/3/4/5) или 'quit', если хотите выйти из программы> ";
@@ -207,12 +214,19 @@ int main(int argc, char** argv)
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
                     std::cout << "Max RSS: " << (double)rusage.ru_maxrss << " KiB" << std::endl;
                 
-                for (uint32_t count = 0; count < trip.cruises_num; count++)
+                if (trip.cruises_num > 0)
                 {
-                    Cruise cruise = trip[count];
-                    std::cout << (count + 1) << ") ";
-                    std::cout << "Из: " << station_id_to_name[cruise.from_id] << ", в: " << station_id_to_name[cruise.to_id];
-                    std::cout << ", Вид транспорта: " << vehicle_id_to_name[cruise.vehicle_id] << ", Время: " << cruise.cruise_time << ", Стоимость: " << cruise.cruise_cost << std::endl;
+                    for (uint32_t count = 0; count < trip.cruises_num; count++)
+                    {
+                        Cruise cruise = trip[count];
+                        std::cout << (count + 1) << ") ";
+                        std::cout << "Из: " << station_id_to_name[cruise.from_id] << ", в: " << station_id_to_name[cruise.to_id];
+                        std::cout << ", Вид транспорта: " << vehicle_id_to_name[cruise.vehicle_id] << ", Время: " << cruise.cruise_time << ", Стоимость: " << cruise.cruise_cost << std::endl;
+                    }
+                }
+                else
+                {
+                    std::cout << "С помощью данных видов транспорта город прибытия не достижим из города отправления" << std::endl;
                 }
                 continue;
             }
@@ -257,12 +271,19 @@ int main(int argc, char** argv)
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
                     std::cout << "Max RSS: " << (double)rusage.ru_maxrss << " KiB" << std::endl;
                 
-                for (uint32_t count = 0; count < trip.cruises_num; count++)
+                if (trip.cruises_num > 0)
                 {
-                    Cruise cruise = trip[count];
-                    std::cout << (count + 1) << ") ";
-                    std::cout << "Из: " << station_id_to_name[cruise.from_id] << ", в: " << station_id_to_name[cruise.to_id];
-                    std::cout << ", Вид транспорта: " << vehicle_id_to_name[cruise.vehicle_id] << ", Время: " << cruise.cruise_time << ", Стоимость: " << cruise.cruise_cost << std::endl;
+                    for (uint32_t count = 0; count < trip.cruises_num; count++)
+                    {
+                        Cruise cruise = trip[count];
+                        std::cout << (count + 1) << ") ";
+                        std::cout << "Из: " << station_id_to_name[cruise.from_id] << ", в: " << station_id_to_name[cruise.to_id];
+                        std::cout << ", Вид транспорта: " << vehicle_id_to_name[cruise.vehicle_id] << ", Время: " << cruise.cruise_time << ", Стоимость: " << cruise.cruise_cost << std::endl;
+                    }
+                }
+                else
+                {
+                    std::cout << "С помощью данных видов транспорта город прибытия не достижим из города отправления" << std::endl;
                 }
                 continue;
             }
@@ -307,12 +328,19 @@ int main(int argc, char** argv)
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
                     std::cout << "Max RSS: " << (double)rusage.ru_maxrss << " KiB" << std::endl;
                 
-                for (uint32_t count = 0; count < trip.cruises_num; count++)
+                if (trip.cruises_num > 0)
                 {
-                    Cruise cruise = trip[count];
-                    std::cout << (count + 1) << ") ";
-                    std::cout << "Из: " << station_id_to_name[cruise.from_id] << ", в: " << station_id_to_name[cruise.to_id];
-                    std::cout << ", Вид транспорта: " << vehicle_id_to_name[cruise.vehicle_id] << ", Время: " << cruise.cruise_time << ", Стоимость: " << cruise.cruise_cost << std::endl;
+                    for (uint32_t count = 0; count < trip.cruises_num; count++)
+                    {
+                        Cruise cruise = trip[count];
+                        std::cout << (count + 1) << ") ";
+                        std::cout << "Из: " << station_id_to_name[cruise.from_id] << ", в: " << station_id_to_name[cruise.to_id];
+                        std::cout << ", Вид транспорта: " << vehicle_id_to_name[cruise.vehicle_id] << ", Время: " << cruise.cruise_time << ", Стоимость: " << cruise.cruise_cost << std::endl;
+                    }
+                }
+                else
+                {
+                    std::cout << "С помощью данных видов транспорта город прибытия не достижим из города отправления" << std::endl;
                 }
                 continue;
             }
@@ -359,20 +387,27 @@ int main(int argc, char** argv)
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
                     std::cout << "Max RSS: " << (double)rusage.ru_maxrss << " KiB" << std::endl;
 
-                for (auto station_from_and_trip : trips_map)
+                if (!trips_map.empty())
                 {
-                    std::string station_from = station_id_to_name[station_from_and_trip.first];
-                    Trip trip = station_from_and_trip.second;
-
-                    std::cout << "До станции '" << station_from << "':" << std::endl;
-
-                    for (uint32_t count = 0; count < trip.cruises_num; count++)
+                    for (auto station_from_and_trip : trips_map)
                     {
-                        Cruise cruise = trip[count];
-                        std::cout << (count + 1) << ") ";
-                        std::cout << "Из: " << station_id_to_name[cruise.from_id] << ", в: " << station_id_to_name[cruise.to_id];
-                        std::cout << ", Вид транспорта: " << vehicle_id_to_name[cruise.vehicle_id] << ", Время: " << cruise.cruise_time << ", Стоимость: " << cruise.cruise_cost << std::endl;
+                        std::string station_from = station_id_to_name[station_from_and_trip.first];
+                        Trip trip = station_from_and_trip.second;
+
+                        std::cout << "До станции '" << station_from << "':" << std::endl;
+
+                        for (uint32_t count = 0; count < trip.cruises_num; count++)
+                        {
+                            Cruise cruise = trip[count];
+                            std::cout << (count + 1) << ") ";
+                            std::cout << "Из: " << station_id_to_name[cruise.from_id] << ", в: " << station_id_to_name[cruise.to_id];
+                            std::cout << ", Вид транспорта: " << vehicle_id_to_name[cruise.vehicle_id] << ", Время: " << cruise.cruise_time << ", Стоимость: " << cruise.cruise_cost << std::endl;
+                        }
                     }
+                }
+                else
+                {
+                    std::cout << "С помощью данных видов транспорта ни один из городов не достижим из города отправления за limit_cost денег" << std::endl;
                 }
                 continue;
             }
@@ -419,20 +454,27 @@ int main(int argc, char** argv)
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
                     std::cout << "Max RSS: " << (double)rusage.ru_maxrss << " KiB" << std::endl;
 
-                for (auto station_from_and_trip : trips_map)
+                if (!trips_map.empty())
                 {
-                    std::string station_from = station_id_to_name[station_from_and_trip.first];
-                    Trip trip = station_from_and_trip.second;
-
-                    std::cout << "До станции '" << station_from << "':" << std::endl;
-
-                    for (uint32_t count = 0; count < trip.cruises_num; count++)
+                    for (auto station_from_and_trip : trips_map)
                     {
-                        Cruise cruise = trip[count];
-                        std::cout << (count + 1) << ") ";
-                        std::cout << "Из: " << station_id_to_name[cruise.from_id] << ", в: " << station_id_to_name[cruise.to_id];
-                        std::cout << ", Вид транспорта: " << vehicle_id_to_name[cruise.vehicle_id] << ", Время: " << cruise.cruise_time << ", Стоимость: " << cruise.cruise_cost << std::endl;
+                        std::string station_from = station_id_to_name[station_from_and_trip.first];
+                        Trip trip = station_from_and_trip.second;
+
+                        std::cout << "До станции '" << station_from << "':" << std::endl;
+
+                        for (uint32_t count = 0; count < trip.cruises_num; count++)
+                        {
+                            Cruise cruise = trip[count];
+                            std::cout << (count + 1) << ") ";
+                            std::cout << "Из: " << station_id_to_name[cruise.from_id] << ", в: " << station_id_to_name[cruise.to_id];
+                            std::cout << ", Вид транспорта: " << vehicle_id_to_name[cruise.vehicle_id] << ", Время: " << cruise.cruise_time << ", Стоимость: " << cruise.cruise_cost << std::endl;
+                        }
                     }
+                }
+                else
+                {
+                    std::cout << "С помощью данных видов транспорта ни один из городов не достижим из города отправления за limit_time времени" << std::endl;
                 }
                 continue;
             }
