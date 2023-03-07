@@ -119,20 +119,20 @@ int main(int argc, char** argv)
     }
     in.close();
 
-    // for (auto pair : graph)
-    // {
-    //     std::cout << station_id_to_name[pair.first] << ": ";
-    //     for (auto p : pair.second)
-    //     {
-    //         std::cout << station_id_to_name[p.first];
-    //         std::vector<Cruise*> cruises = p.second;
-    //         for (auto cruise : cruises)
-    //         {
-    //             std::cout << " (" << station_id_to_name[cruise->from_id] << " " << station_id_to_name[cruise->to_id] << " " << vehicle_id_to_name[cruise->vehicle_id] << " " << cruise->cruise_time << " " << cruise->cruise_cost << "), ";
-    //         }
-    //     }
-    //     std::cout << std::endl;
-    // }
+    for (auto pair : graph.graph)
+    {
+        std::cout << station_id_to_name[pair.first] << ": ";
+        for (auto p : pair.second)
+        {
+            std::cout << station_id_to_name[p.first];
+            std::vector<Cruise> cruises = p.second;
+            for (auto cruise : cruises)
+            {
+                std::cout << " (" << station_id_to_name[cruise.from_id] << " " << station_id_to_name[cruise.to_id] << " " << vehicle_id_to_name[cruise.vehicle_id] << " " << cruise.cruise_time << " " << cruise.cruise_cost << "), ";
+            }
+        }
+        std::cout << std::endl;
+    }
 
     std::cout << "Здравствуйте! Данная программа умеет отвечать на следующие типы запросов:" << std::endl;
     std::cout << "1) Среди кратчайших по времени путей между двумя городами найти путь минимальной стоимости. Если город достижим из города отправления" << std::endl;
@@ -201,11 +201,14 @@ int main(int argc, char** argv)
 
                 Trip trip;
                 uint32_t current_station = to_id;
-                while (current_station != from_id)
+                if (std::get<0>(d_extra_p)[to_id] < INF)
                 {
-                    Cruise next_cruise = std::get<2>(d_extra_p)[current_station];
-                    trip += next_cruise;
-                    current_station = next_cruise.from_id;
+                    while (current_station != from_id)
+                    {
+                        Cruise next_cruise = std::get<2>(d_extra_p)[current_station];
+                        trip += next_cruise;
+                        current_station = next_cruise.from_id;
+                    }
                 }
                 auto end_operation = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> operation_time = end_operation - start_operation;
@@ -258,11 +261,14 @@ int main(int argc, char** argv)
 
                 Trip trip;
                 uint32_t current_station = to_id;
-                while (current_station != from_id)
+                if (d_p.first[to_id] < INF)
                 {
-                    Cruise next_cruise = d_p.second[current_station];
-                    trip += next_cruise;
-                    current_station = next_cruise.from_id;
+                    while (current_station != from_id)
+                    {
+                        Cruise next_cruise = d_p.second[current_station];
+                        trip += next_cruise;
+                        current_station = next_cruise.from_id;
+                    }
                 }
                 auto end_operation = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> operation_time = end_operation - start_operation;
@@ -315,11 +321,14 @@ int main(int argc, char** argv)
 
                 Trip trip;
                 uint32_t current_station = to_id;
-                while (current_station != from_id)
+                if (d_p.first[to_id] < INF)
                 {
-                    Cruise next_cruise = d_p.second[current_station];
-                    trip += next_cruise;
-                    current_station = next_cruise.from_id;
+                    while (current_station != from_id)
+                    {
+                        Cruise next_cruise = d_p.second[current_station];
+                        trip += next_cruise;
+                        current_station = next_cruise.from_id;
+                    }
                 }
                 auto end_operation = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> operation_time = end_operation - start_operation;
