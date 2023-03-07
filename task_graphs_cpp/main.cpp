@@ -3,13 +3,14 @@
 
 #include <iostream>
 #include <fstream>
-#include <time.h>
+#include <chrono>
 #include <sys/resource.h>
 
 
 int main(int argc, char** argv)
 {  
-    time_t start_program = time(NULL);
+    auto start_program = std::chrono::high_resolution_clock::now();
+    struct rusage rusage;
 
     std::map<std::string, uint32_t> station_name_to_id;
     std::map<uint32_t, std::string> station_id_to_name;
@@ -158,8 +159,6 @@ int main(int argc, char** argv)
         {
             case 1:
             {
-                //time_t start_operation = time(NULL);
-
                 std::string station_from, station_to;
                 std::cout << "Enter station_from> ";
                 getline(std::cin, station_from);
@@ -168,6 +167,8 @@ int main(int argc, char** argv)
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
                 to_id = station_name_to_id[station_to];
+
+                auto start_operation = std::chrono::high_resolution_clock::now();
                 std::tuple<std::vector<uint32_t>, std::vector<uint32_t>, std::vector<Cruise>> d_extra_p = dijkstra_extra_cond(from_id, next_station_id, graph, 0, vehicles_types);
 
                 Trip trip;
@@ -178,6 +179,12 @@ int main(int argc, char** argv)
                     trip += next_cruise;
                     current_station = next_cruise.from_id;
                 }
+                auto end_operation = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> operation_time = end_operation - start_operation;
+                std::cout << "Operation time: " << operation_time.count() << " seconds" << std::endl;
+
+                if (getrusage(RUSAGE_SELF, &rusage) != -1)
+                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << std::endl;
                 
                 for (uint32_t count = 0; count < trip.cruises_num; count++)
                 {
@@ -186,13 +193,10 @@ int main(int argc, char** argv)
                     std::cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
                     std::cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << std::endl;
                 }
-                //std::cout << "Operation time: " << (time(NULL) - start_operation) << std::endl;
                 continue;
             }
             case 2:
             {
-                //time_t start_operation = time(NULL);
-
                 std::string station_from, station_to;
                 std::cout << "Enter station_from> ";
                 getline(std::cin, station_from);
@@ -201,6 +205,8 @@ int main(int argc, char** argv)
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
                 to_id = station_name_to_id[station_to];
+
+                auto start_operation = std::chrono::high_resolution_clock::now();
                 std::pair<std::vector<uint32_t>, std::vector<Cruise>> d_p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types);
 
                 Trip trip;
@@ -211,6 +217,12 @@ int main(int argc, char** argv)
                     trip += next_cruise;
                     current_station = next_cruise.from_id;
                 }
+                auto end_operation = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> operation_time = end_operation - start_operation;
+                std::cout << "Operation time: " << operation_time.count() << " seconds" << std::endl;
+
+                if (getrusage(RUSAGE_SELF, &rusage) != -1)
+                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << std::endl;
                 
                 for (uint32_t count = 0; count < trip.cruises_num; count++)
                 {
@@ -219,13 +231,10 @@ int main(int argc, char** argv)
                     std::cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
                     std::cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << std::endl;
                 }
-                //std::cout << "Operation time: " << (time(NULL) - start_operation) << std::endl;
                 continue;
             }
             case 3:
             {
-                //time_t start_operation = time(NULL);
-
                 std::string station_from, station_to;
                 std::cout << "Enter station_from> ";
                 getline(std::cin, station_from);
@@ -234,6 +243,8 @@ int main(int argc, char** argv)
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
                 to_id = station_name_to_id[station_to];
+
+                auto start_operation = std::chrono::high_resolution_clock::now();
                 std::pair<std::vector<uint32_t>, std::vector<Cruise>> d_p = bfs(from_id, next_station_id, graph, vehicles_types);
 
                 Trip trip;
@@ -244,6 +255,12 @@ int main(int argc, char** argv)
                     trip += next_cruise;
                     current_station = next_cruise.from_id;
                 }
+                auto end_operation = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> operation_time = end_operation - start_operation;
+                std::cout << "Operation time: " << operation_time.count() << " seconds" << std::endl;
+
+                if (getrusage(RUSAGE_SELF, &rusage) != -1)
+                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << std::endl;
                 
                 for (uint32_t count = 0; count < trip.cruises_num; count++)
                 {
@@ -252,13 +269,10 @@ int main(int argc, char** argv)
                     std::cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
                     std::cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << std::endl;
                 }
-                //std::cout << "Operation time: " << (time(NULL) - start_operation) << std::endl;
                 continue;
             }
             case 4:
             {
-                //time_t start_operation = time(NULL);
-
                 std::string station_from, limit_cost_str;
                 std::cout << "Enter station_from> ";
                 getline(std::cin, station_from);
@@ -267,14 +281,15 @@ int main(int argc, char** argv)
                 uint32_t from_id, limit_cost;
                 from_id = station_name_to_id[station_from];
                 limit_cost = stoi(limit_cost_str);
+
+                auto start_operation = std::chrono::high_resolution_clock::now();
                 std::pair<std::vector<uint32_t>, std::vector<Cruise>> d_p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types);
 
+                std::map<uint32_t, Trip> trips_map;
                 for (uint32_t i = 0; i < next_station_id; i++)
                 {
                     if (i != from_id && d_p.first[i] <= limit_cost)
                     {
-                        std::cout << "To " << station_id_to_name[i] << ":" << std::endl;
-
                         Trip trip;
                         uint32_t current_station = i;
                         while (current_station != from_id)
@@ -283,23 +298,35 @@ int main(int argc, char** argv)
                             trip += next_cruise;
                             current_station = next_cruise.from_id;
                         }
-
-                        for (uint32_t count = 0; count < trip.cruises_num; count++)
-                        {
-                            Cruise cruise = trip[count];
-                            std::cout << (count + 1) << ") ";
-                            std::cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
-                            std::cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << std::endl;
-                        }
+                        trips_map[i] = trip;
                     }
                 }
-                //std::cout << "Operation time: " << (time(NULL) - start_operation) << std::endl;
+                auto end_operation = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> operation_time = end_operation - start_operation;
+                std::cout << "Operation time: " << operation_time.count() << " seconds" << std::endl;
+
+                if (getrusage(RUSAGE_SELF, &rusage) != -1)
+                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << std::endl;
+
+                for (auto station_from_and_trip : trips_map)
+                {
+                    std::string station_from = station_id_to_name[station_from_and_trip.first];
+                    Trip trip = station_from_and_trip.second;
+
+                    std::cout << "To " << station_from << ":" << std::endl;
+
+                    for (uint32_t count = 0; count < trip.cruises_num; count++)
+                    {
+                        Cruise cruise = trip[count];
+                        std::cout << (count + 1) << ") ";
+                        std::cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
+                        std::cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << std::endl;
+                    }
+                }
                 continue;
             }
             case 5:
             {
-                //time_t start_operation = time(NULL);
-
                 std::string station_from, limit_time_str;
                 std::cout << "Enter station_from> ";
                 getline(std::cin, station_from);
@@ -308,14 +335,15 @@ int main(int argc, char** argv)
                 uint32_t from_id, limit_time;
                 from_id = station_name_to_id[station_from];
                 limit_time = stoi(limit_time_str);
+                
+                auto start_operation = std::chrono::high_resolution_clock::now();
                 std::pair<std::vector<uint32_t>, std::vector<Cruise>> d_p = dijkstra(from_id, next_station_id, graph, 0, vehicles_types);
 
+                std::map<uint32_t, Trip> trips_map;
                 for (uint32_t i = 0; i < next_station_id; i++)
                 {
                     if (i != from_id && d_p.first[i] <= limit_time)
                     {
-                        std::cout << "To " << station_id_to_name[i] << ":" << std::endl;
-
                         Trip trip;
                         uint32_t current_station = i;
                         while (current_station != from_id)
@@ -324,17 +352,31 @@ int main(int argc, char** argv)
                             trip += next_cruise;
                             current_station = next_cruise.from_id;
                         }
-
-                        for (uint32_t count = 0; count < trip.cruises_num; count++)
-                        {
-                            Cruise cruise = trip[count];
-                            std::cout << (count + 1) << ") ";
-                            std::cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
-                            std::cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << std::endl;
-                        }
+                        trips_map[i] = trip;
                     }
                 }
-                //std::cout << "Operation time: " << (time(NULL) - start_operation) << std::endl;
+                auto end_operation = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> operation_time = end_operation - start_operation;
+                std::cout << "Operation time: " << operation_time.count() << " seconds" << std::endl;
+
+                if (getrusage(RUSAGE_SELF, &rusage) != -1)
+                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << std::endl;
+
+                for (auto station_from_and_trip : trips_map)
+                {
+                    std::string station_from = station_id_to_name[station_from_and_trip.first];
+                    Trip trip = station_from_and_trip.second;
+
+                    std::cout << "To " << station_from << ":" << std::endl;
+
+                    for (uint32_t count = 0; count < trip.cruises_num; count++)
+                    {
+                        Cruise cruise = trip[count];
+                        std::cout << (count + 1) << ") ";
+                        std::cout << "From: " << station_id_to_name[cruise.from_id] << ", To: " << station_id_to_name[cruise.to_id];
+                        std::cout << ", Vehicle: " << vehicle_id_to_name[cruise.vehicle_id] << ", Time: " << cruise.cruise_time << ", Cost: " << cruise.cruise_cost << std::endl;
+                    }
+                }
                 continue;
             }
             default:
@@ -345,9 +387,13 @@ int main(int argc, char** argv)
         }
     }
     std::cout << "Good Bye!" << std::endl;
-    time_t end_program = time(NULL);
-    std::cout << end_program << " " << start_program << std::endl;
-    std::cout << "Program time: " << (end_program - start_program) << std::endl;
+
+    auto end_program = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> program_duration = end_program - start_program;
+    std::cout << "Program duration: " << program_duration.count() << " seconds" << std::endl;
+
+    if (getrusage(RUSAGE_SELF, &rusage) != -1)
+        std::cout << "Max RSS: " << (double)rusage.ru_maxrss << std::endl;
 
     return 0;
 }
