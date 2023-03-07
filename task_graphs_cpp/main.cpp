@@ -4,7 +4,13 @@
 #include <iostream>
 #include <fstream>
 #include <chrono>
+#include <algorithm>
 #include <sys/resource.h>
+
+bool is_digits(const std::string &str)
+{
+    return std::all_of(str.begin(), str.end(), ::isdigit);
+}
 
 int main(int argc, char** argv)
 {  
@@ -368,8 +374,14 @@ int main(int argc, char** argv)
                 std::cout << "Введите лимит стоимости> ";
                 getline(std::cin, limit_cost_str);
                 uint32_t from_id, limit_cost;
-                from_id = station_name_to_id[station_from];
+                while (limit_cost_str == "" || !is_digits(limit_cost_str) || stoi(limit_cost_str) <= 0)
+                {
+                    std::cout << "Введен недопустимый лимит стоимости. Повторите ввод" << std::endl;
+                    std::cout << "Введите лимит стоимости> ";
+                    getline(std::cin, limit_cost_str);
+                }
                 limit_cost = stoi(limit_cost_str);
+                from_id = station_name_to_id[station_from];
 
                 auto start_operation = std::chrono::high_resolution_clock::now();
                 BFS_Dijkstra_vectors_d_p d_p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types);
@@ -435,8 +447,14 @@ int main(int argc, char** argv)
                 std::cout << "Введите лимит времени> ";
                 getline(std::cin, limit_time_str);
                 uint32_t from_id, limit_time;
-                from_id = station_name_to_id[station_from];
+                while (limit_time_str == "" || !is_digits(limit_time_str) || stoi(limit_time_str) <= 0)
+                {
+                    std::cout << "Введен недопустимый лимит времени. Повторите ввод" << std::endl;
+                    std::cout << "Введите лимит времени> ";
+                    getline(std::cin, limit_time_str);
+                }
                 limit_time = stoi(limit_time_str);
+                from_id = station_name_to_id[station_from];
                 
                 auto start_operation = std::chrono::high_resolution_clock::now();
                 BFS_Dijkstra_vectors_d_p d_p = dijkstra(from_id, next_station_id, graph, 0, vehicles_types);

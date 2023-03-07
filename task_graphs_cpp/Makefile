@@ -1,2 +1,2 @@
 all:
-	g++ classes.cpp algorithms.cpp main.cpp -o main.o
+	g++ classes.cpp algorithms.cpp main.cpp -std=c++17 -o main
