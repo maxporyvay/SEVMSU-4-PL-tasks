@@ -1,6 +1,6 @@
 #include "algorithms.hpp"
 
-std::pair<std::vector<uint32_t>, std::vector<Cruise>> bfs(uint32_t s, uint32_t n, CruisesGraph graph, std::unordered_set<uint32_t> vehicles_types)
+BFS_Dijkstra_vectors_d_p bfs(uint32_t s, uint32_t n, CruisesGraph graph, std::unordered_set<uint32_t> vehicles_types)
 {
     std::queue<uint32_t> q;
     q.push(s);
@@ -36,7 +36,7 @@ std::pair<std::vector<uint32_t>, std::vector<Cruise>> bfs(uint32_t s, uint32_t n
     return {d, p};
 };
 
-std::pair<std::vector<uint32_t>, std::vector<Cruise>> dijkstra(uint32_t s, uint32_t n, CruisesGraph graph, uint32_t to_optimize, std::unordered_set<uint32_t> vehicles_types)
+BFS_Dijkstra_vectors_d_p dijkstra(uint32_t s, uint32_t n, CruisesGraph graph, uint32_t to_optimize, std::unordered_set<uint32_t> vehicles_types)
 {
     std::vector<uint32_t> d(n, INF);
     std::vector<Cruise> p(n);
@@ -85,7 +85,7 @@ std::pair<std::vector<uint32_t>, std::vector<Cruise>> dijkstra(uint32_t s, uint3
     return {d, p};
 }
 
-std::tuple<std::vector<uint32_t>, std::vector<uint32_t>, std::vector<Cruise>> dijkstra_extra_cond(uint32_t s, uint32_t n, CruisesGraph graph, uint32_t to_optimize, std::unordered_set<uint32_t> vehicles_types)
+Dijkstra_vectors_d_extra_p dijkstra_extra_cond(uint32_t s, uint32_t n, CruisesGraph graph, uint32_t to_optimize, std::unordered_set<uint32_t> vehicles_types)
 {
     std::vector<uint32_t> d(n, INF);
     std::vector<uint32_t> extra(n, INF);

@@ -119,20 +119,21 @@ int main(int argc, char** argv)
     }
     in.close();
 
-    for (auto pair : graph.graph)
-    {
-        std::cout << station_id_to_name[pair.first] << ": ";
-        for (auto p : pair.second)
-        {
-            std::cout << station_id_to_name[p.first];
-            std::vector<Cruise> cruises = p.second;
-            for (auto cruise : cruises)
-            {
-                std::cout << " (" << station_id_to_name[cruise.from_id] << " " << station_id_to_name[cruise.to_id] << " " << vehicle_id_to_name[cruise.vehicle_id] << " " << cruise.cruise_time << " " << cruise.cruise_cost << "), ";
-            }
-        }
-        std::cout << std::endl;
-    }
+    // for (auto pair : graph.graph)
+    // {
+    //     std::cout << station_id_to_name[pair.first] << ": ";
+    //     for (auto p : pair.second)
+    //     {
+    //         std::cout << station_id_to_name[p.first];
+    //         std::vector<Cruise> cruises = p.second;
+    //         for (auto cruise : cruises)
+    //         {
+    //             std::cout << " (" << station_id_to_name[cruise.from_id] << " " << station_id_to_name[cruise.to_id] << " ";
+    //             std::cout << vehicle_id_to_name[cruise.vehicle_id] << " " << cruise.cruise_time << " " << cruise.cruise_cost << "), ";
+    //         }
+    //     }
+    //     std::cout << std::endl;
+    // }
 
     std::cout << "Здравствуйте! Данная программа умеет отвечать на следующие типы запросов:" << std::endl;
     std::cout << "1) Среди кратчайших по времени путей между двумя городами найти путь минимальной стоимости. Если город достижим из города отправления" << std::endl;
@@ -197,7 +198,7 @@ int main(int argc, char** argv)
                 to_id = station_name_to_id[station_to];
 
                 auto start_operation = std::chrono::high_resolution_clock::now();
-                std::tuple<std::vector<uint32_t>, std::vector<uint32_t>, std::vector<Cruise>> d_extra_p = dijkstra_extra_cond(from_id, next_station_id, graph, 0, vehicles_types);
+                Dijkstra_vectors_d_extra_p d_extra_p = dijkstra_extra_cond(from_id, next_station_id, graph, 0, vehicles_types);
 
                 Trip trip;
                 uint32_t current_station = to_id;
@@ -257,7 +258,7 @@ int main(int argc, char** argv)
                 to_id = station_name_to_id[station_to];
 
                 auto start_operation = std::chrono::high_resolution_clock::now();
-                std::pair<std::vector<uint32_t>, std::vector<Cruise>> d_p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types);
+                BFS_Dijkstra_vectors_d_p d_p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types);
 
                 Trip trip;
                 uint32_t current_station = to_id;
@@ -317,7 +318,7 @@ int main(int argc, char** argv)
                 to_id = station_name_to_id[station_to];
 
                 auto start_operation = std::chrono::high_resolution_clock::now();
-                std::pair<std::vector<uint32_t>, std::vector<Cruise>> d_p = bfs(from_id, next_station_id, graph, vehicles_types);
+                BFS_Dijkstra_vectors_d_p d_p = bfs(from_id, next_station_id, graph, vehicles_types);
 
                 Trip trip;
                 uint32_t current_station = to_id;
@@ -371,7 +372,7 @@ int main(int argc, char** argv)
                 limit_cost = stoi(limit_cost_str);
 
                 auto start_operation = std::chrono::high_resolution_clock::now();
-                std::pair<std::vector<uint32_t>, std::vector<Cruise>> d_p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types);
+                BFS_Dijkstra_vectors_d_p d_p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types);
 
                 std::map<uint32_t, Trip> trips_map;
                 for (uint32_t i = 0; i < next_station_id; i++)
@@ -438,7 +439,7 @@ int main(int argc, char** argv)
                 limit_time = stoi(limit_time_str);
                 
                 auto start_operation = std::chrono::high_resolution_clock::now();
-                std::pair<std::vector<uint32_t>, std::vector<Cruise>> d_p = dijkstra(from_id, next_station_id, graph, 0, vehicles_types);
+                BFS_Dijkstra_vectors_d_p d_p = dijkstra(from_id, next_station_id, graph, 0, vehicles_types);
 
                 std::map<uint32_t, Trip> trips_map;
                 for (uint32_t i = 0; i < next_station_id; i++)
