@@ -6,6 +6,7 @@
 #include <chrono>
 #include <algorithm>
 #include <sys/resource.h>
+#include <ncurses.h>
 
 bool is_digits(const std::string &str)
 {
@@ -141,63 +142,166 @@ int main(int argc, char** argv)
     //     std::cout << std::endl;
     // }
 
-    std::cout << "Здравствуйте! Данная программа умеет отвечать на следующие типы запросов:" << std::endl;
-    std::cout << "1) Среди кратчайших по времени путей между двумя городами найти путь минимальной стоимости. Если город достижим из города отправления" << std::endl;
-    std::cout << "2) Среди путей между двумя городами найти путь минимальной стоимости. Если город достижим из города отправления" << std::endl;
-    std::cout << "3) Найти путь между 2-мя городами минимальный по числу посещённых городов" << std::endl;
-    std::cout << "4) Найти множество городов, достижимых из города отправления не более чем за limit_cost денег и вывести кратчайшие по деньгам пути к ним" << std::endl;
-    std::cout << "5) Найти множество городов, достижимых из города отправления не более чем за limit_time времени и вывести кратчайшие по времени пути к ним" << std::endl;
+    initscr();
+    bool want_to_exit = false;
 
-    for (;;)
+    while (!want_to_exit)
     {
-        std::cout << "Введите тип запроса (1/2/3/4/5) или 'quit', если хотите выйти из программы> ";
-        std::string task_type_str;
-        getline(std::cin, task_type_str);
-        if (task_type_str == "quit")
+        uint32_t current_item_index = 0;
+        bool choice_made = false;
+        noecho();
+
+        while (!choice_made)
         {
-            break;
-        }
-        uint32_t task_type = stoi(task_type_str);
-        std::string vehicles_types_num_str;
-        std::cout << "Введите число допустимых видов транспорта> ";
-        getline(std::cin, vehicles_types_num_str);
-        uint32_t vehicles_types_num = stoi(vehicles_types_num_str);
-        std::unordered_set<uint32_t> vehicles_types;
-        for (uint32_t i = 1; i <= vehicles_types_num; i++)
-        {
-            std::cout << "Введите допустимый вид транспорта #" << i << "> ";
-            std::string vehicle_type;
-            getline(std::cin, vehicle_type);
-            if (vehicle_name_to_id.find(vehicle_type) != vehicle_name_to_id.end())
+            clear();
+            curs_set(0);
+            keypad(stdscr, true); 
+            addstr("Выберите желаемый режим работы программы:\n\n");
+            refresh();
+            const char *choices[6] = {"Нахождение пути минимальной стоимости среди кратчайших путей между двумя городами",
+                                    "Нахождение пути минимальной стоимости между двумя городами",
+                                    "Нахождение пути между двумя городами с минимальным числом пересадок",
+                                    "Нахождение городов, достижимых из города отправления не более чем за лимит денег, и путей к ним",
+                                    "Нахождение городов, достижимых из города отправления не более чем за лимит времени, и путей к ним",
+                                    "Выйти из программы"};
+            
+            for (uint32_t i = 0; i < 6; i++)
             {
+                if (i == current_item_index)
+                {
+                    attron(A_STANDOUT);
+                    printw("%s\n", choices[i]);
+                    attroff(A_STANDOUT);
+                }
+                else
+                {
+                    printw("%s\n", choices[i]);
+                }
+                refresh();
+            }
+
+            switch (getch())
+            {
+                case KEY_UP:
+                {
+                    if (current_item_index > 0)
+                    {
+                        current_item_index--; 
+                    }
+                    else
+                    {
+                        current_item_index = 5;
+                    }
+                    break;
+                }
+
+                case KEY_DOWN:
+                {
+                    if (current_item_index < 5)
+                    {
+                        current_item_index++;
+                    }
+                    else
+                    {
+                        current_item_index = 0;
+                    }
+                    break;
+                }
+                    
+                case (int)'\n':
+                {
+                    choice_made = true;
+                    break;
+                }
+
+                default:
+                {
+                    break;
+                }
+            }
+        }
+        keypad(stdscr, false); 
+
+        std::unordered_set<uint32_t> vehicles_types;
+
+        if (current_item_index >= 0 && current_item_index <= 4)
+        {
+            clear();
+            echo();
+            char vehicles_types_num_strchar[100];
+            addstr("Введите число допустимых видов транспорта:\n");
+            refresh();
+            curs_set(1);
+            getstr(vehicles_types_num_strchar);
+            std::string vehicles_types_num_str(vehicles_types_num_strchar);
+            while (vehicles_types_num_str == "" || !is_digits(vehicles_types_num_str) || stoi(vehicles_types_num_str) <= 0)
+            {
+                clear();
+                addstr("Ошибка ввода. Введите число подходящих видов транспорта:\n");
+                refresh();
+                curs_set(1);
+                getstr(vehicles_types_num_strchar);
+                vehicles_types_num_str = vehicles_types_num_strchar;
+            }
+            uint32_t vehicles_types_num = stoi(vehicles_types_num_str);
+            
+            for (uint32_t i = 1; i <= vehicles_types_num; i++)
+            {
+                clear();
+                printw("Введите подходящий вид транспорта #%i:\n", i);
+                refresh();
+                char vehicle_type_char[100];
+                curs_set(1);
+                getstr(vehicle_type_char);
+                std::string vehicle_type(vehicle_type_char);
+                while (vehicle_name_to_id.find(vehicle_type) == vehicle_name_to_id.end())
+                {
+                    clear();
+                    printw("Введен несуществующий вид транспорта. Введите подходящий вид транспорта #%i:\n", i);
+                    refresh();
+                    curs_set(1);
+                    getstr(vehicle_type_char);
+                    vehicle_type = vehicle_type_char;
+                }
                 vehicles_types.insert(vehicle_name_to_id[vehicle_type]);
             }
-            else
-            {
-                std::cout << "Введен недопустимый вид транспорта. Повторите ввод" << std::endl;
-                i--;
-            }
         }
-        switch (task_type)
+
+        switch (current_item_index)
         {
-            case 1:
+            case 0:
             {
-                std::string station_from, station_to;
-                std::cout << "Введите станцию отправления> ";
-                getline(std::cin, station_from);
+                clear();
+                char station_from_char[100];
+                addstr("Введите станцию отправления:\n");
+                refresh();
+                curs_set(1);
+                getstr(station_from_char);
+                std::string station_from(station_from_char);
                 while (station_name_to_id.find(station_from) == station_name_to_id.end())
                 {
-                    std::cout << "Введена недопустимая станция отправления. Повторите ввод" << std::endl;
-                    std::cout << "Введите станцию отправления> ";
-                    getline(std::cin, station_from);
+                    clear();
+                    addstr("Введена недопустимая станция отправления. Введите станцию отправления:\n");
+                    refresh();
+                    curs_set(1);
+                    getstr(station_from_char);
+                    station_from = station_from_char;
                 }
-                std::cout << "Введите станцию прибытия> ";
-                getline(std::cin, station_to);
+                clear();
+                char station_to_char[100];
+                addstr("Введите станцию прибытия:\n");
+                refresh();
+                curs_set(1);
+                getstr(station_to_char);
+                std::string station_to(station_to_char);
                 while (station_name_to_id.find(station_to) == station_name_to_id.end())
                 {
-                    std::cout << "Введена недопустимая станция прибытия. Повторите ввод" << std::endl;
-                    std::cout << "Введите станцию прибытия> ";
-                    getline(std::cin, station_to);
+                    clear();
+                    addstr("Введена недопустимая станция прибытия. Введите станцию прибытия:\n");
+                    refresh();
+                    curs_set(1);
+                    getstr(station_to_char);
+                    station_to = station_to_char;
                 }
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
@@ -223,52 +327,81 @@ int main(int argc, char** argv)
                 }
                 auto end_operation = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> operation_time = end_operation - start_operation;
-                std::cout << "Время выполнения запроса: " << operation_time.count() << " сек." << std::endl;
+                printw("Время выполнения запроса: %f сек.\n", operation_time);
+                refresh();
 
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
-                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << " KiB" << std::endl;
+                {
+                    printw("Max RSS: %f KiB\n\n", (double)rusage.ru_maxrss);
+                    refresh();
+                }
                 
                 if (trip.cruises_num > 0)
                 {
-                    for (uint32_t count = 0; count < trip.cruises_num; count++)
+                    for (uint32_t count = 1; count <= trip.cruises_num; count++)
                     {
-                        Cruise cruise = trip[count];
-                        std::cout << (count + 1) << ") ";
-                        std::cout << "Из: " << station_id_to_name[cruise.from_id] << ", в: " << station_id_to_name[cruise.to_id];
-                        std::cout << ", Вид транспорта: " << vehicle_id_to_name[cruise.vehicle_id] << ", Время: " << cruise.cruise_time << ", Стоимость: " << cruise.cruise_cost << std::endl;
+                        Cruise cruise = trip[count - 1];
+                        std::string from = station_id_to_name[cruise.from_id];
+                        std::string to = station_id_to_name[cruise.to_id];
+                        std::string vehicle = vehicle_id_to_name[cruise.vehicle_id];
+                        uint32_t time = cruise.cruise_time;
+                        uint32_t cost = cruise.cruise_cost;
+                        printw("%i) Из: %s, в: %s, транспорт: %s, время: %i, стоимость: %i\n", count, from.c_str(), to.c_str(), vehicle.c_str(), time, cost);
+                        refresh();
                     }
                 }
                 else
                 {
-                    std::cout << "С помощью данных видов транспорта город прибытия не достижим из города отправления" << std::endl;
+                    addstr("С помощью данных видов транспорта город прибытия не достижим из города отправления\n");
+                    refresh();
                 }
-                continue;
+                addstr("Нажмите любую клавишу для перехода в меню\n");
+                refresh();
+                curs_set(0);
+                getch();
+                break;
             }
-            case 2:
+
+            case 1:
             {
-                std::string station_from, station_to;
-                std::cout << "Введите станцию отправления> ";
-                getline(std::cin, station_from);
+                clear();
+                char station_from_char[100];
+                addstr("Введите станцию отправления:\n");
+                refresh();
+                curs_set(1);
+                getstr(station_from_char);
+                std::string station_from(station_from_char);
                 while (station_name_to_id.find(station_from) == station_name_to_id.end())
                 {
-                    std::cout << "Введена недопустимая станция отправления. Повторите ввод" << std::endl;
-                    std::cout << "Введите станцию отправления> ";
-                    getline(std::cin, station_from);
+                    clear();
+                    addstr("Введена недопустимая станция отправления. Введите станцию отправления:\n");
+                    refresh();
+                    curs_set(1);
+                    getstr(station_from_char);
+                    station_from = station_from_char;
                 }
-                std::cout << "Введите станцию прибытия> ";
-                getline(std::cin, station_to);
+                clear();
+                char station_to_char[100];
+                addstr("Введите станцию прибытия:\n");
+                refresh();
+                curs_set(1);
+                getstr(station_to_char);
+                std::string station_to(station_to_char);
                 while (station_name_to_id.find(station_to) == station_name_to_id.end())
                 {
-                    std::cout << "Введена недопустимая станция прибытия. Повторите ввод" << std::endl;
-                    std::cout << "Введите станцию прибытия> ";
-                    getline(std::cin, station_to);
+                    clear();
+                    addstr("Введена недопустимая станция прибытия. Введите станцию прибытия:\n");
+                    refresh();
+                    curs_set(1);
+                    getstr(station_to_char);
+                    station_to = station_to_char;
                 }
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
                 to_id = station_name_to_id[station_to];
 
                 auto start_operation = std::chrono::high_resolution_clock::now();
-
+                
                 std::vector<uint32_t> d(next_station_id, INF);
                 std::vector<Cruise> p(next_station_id);
                 dijkstra(from_id, graph, 1, vehicles_types, d, p);
@@ -286,53 +419,83 @@ int main(int argc, char** argv)
                 }
                 auto end_operation = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> operation_time = end_operation - start_operation;
-                std::cout << "Время выполнения запроса: " << operation_time.count() << " сек." << std::endl;
+                printw("Время выполнения запроса: %f сек.\n", operation_time);
+                refresh();
 
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
-                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << " KiB" << std::endl;
+                {
+                    printw("Max RSS: %f KiB\n\n", (double)rusage.ru_maxrss);
+                    refresh();
+                }
                 
                 if (trip.cruises_num > 0)
                 {
-                    for (uint32_t count = 0; count < trip.cruises_num; count++)
+                    for (uint32_t count = 1; count <= trip.cruises_num; count++)
                     {
-                        Cruise cruise = trip[count];
-                        std::cout << (count + 1) << ") ";
-                        std::cout << "Из: " << station_id_to_name[cruise.from_id] << ", в: " << station_id_to_name[cruise.to_id];
-                        std::cout << ", Вид транспорта: " << vehicle_id_to_name[cruise.vehicle_id] << ", Время: " << cruise.cruise_time << ", Стоимость: " << cruise.cruise_cost << std::endl;
+                        Cruise cruise = trip[count - 1];
+                        std::string from = station_id_to_name[cruise.from_id];
+                        std::string to = station_id_to_name[cruise.to_id];
+                        std::string vehicle = vehicle_id_to_name[cruise.vehicle_id];
+                        uint32_t time = cruise.cruise_time;
+                        uint32_t cost = cruise.cruise_cost;
+                        printw("%i) Из: %s, в: %s, транспорт: %s, время: %i, стоимость: %i\n", count, from.c_str(), to.c_str(), vehicle.c_str(), time, cost);
+                        refresh();
                     }
                 }
                 else
                 {
-                    std::cout << "С помощью данных видов транспорта город прибытия не достижим из города отправления" << std::endl;
+                    addstr("С помощью данных видов транспорта город прибытия не достижим из города отправления\n");
+                    refresh();
                 }
-                continue;
+                addstr("Нажмите любую клавишу для перехода в меню\n");
+                refresh();
+                curs_set(0);
+                getch();
+                break;
             }
-            case 3:
+
+            case 2:
             {
-                std::string station_from, station_to;
-                std::cout << "Введите станцию отправления> ";
-                getline(std::cin, station_from);
+                clear();
+                char station_from_char[100];
+                addstr("Введите станцию отправления:\n");
+                refresh();
+                curs_set(1);
+                getstr(station_from_char);
+                std::string station_from(station_from_char);
                 while (station_name_to_id.find(station_from) == station_name_to_id.end())
                 {
-                    std::cout << "Введена недопустимая станция отправления. Повторите ввод" << std::endl;
-                    std::cout << "Введите станцию отправления> ";
-                    getline(std::cin, station_from);
+                    clear();
+                    addstr("Введена недопустимая станция отправления. Введите станцию отправления:\n");
+                    refresh();
+                    curs_set(1);
+                    getstr(station_from_char);
+                    station_from = station_from_char;
                 }
-                std::cout << "Введите станцию прибытия> ";
-                getline(std::cin, station_to);
+                clear();
+                char station_to_char[100];
+                addstr("Введите станцию прибытия:\n");
+                refresh();
+                curs_set(1);
+                getstr(station_to_char);
+                std::string station_to(station_to_char);
                 while (station_name_to_id.find(station_to) == station_name_to_id.end())
                 {
-                    std::cout << "Введена недопустимая станция прибытия. Повторите ввод" << std::endl;
-                    std::cout << "Введите станцию прибытия> ";
-                    getline(std::cin, station_to);
+                    clear();
+                    addstr("Введена недопустимая станция прибытия. Введите станцию прибытия:\n");
+                    refresh();
+                    curs_set(1);
+                    getstr(station_to_char);
+                    station_to = station_to_char;
                 }
                 uint32_t from_id, to_id;
                 from_id = station_name_to_id[station_from];
                 to_id = station_name_to_id[station_to];
 
                 auto start_operation = std::chrono::high_resolution_clock::now();
-
+                
                 std::vector<uint32_t> d(next_station_id, INF);
+                std::vector<uint32_t> extra(next_station_id, INF);
                 std::vector<Cruise> p(next_station_id);
                 bfs(from_id, graph, vehicles_types, d, p);
 
@@ -349,47 +512,76 @@ int main(int argc, char** argv)
                 }
                 auto end_operation = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> operation_time = end_operation - start_operation;
-                std::cout << "Время выполнения запроса: " << operation_time.count() << " сек." << std::endl;
+                printw("Время выполнения запроса: %f сек.\n", operation_time);
+                refresh();
 
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
-                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << " KiB" << std::endl;
+                {
+                    printw("Max RSS: %f KiB\n\n", (double)rusage.ru_maxrss);
+                    refresh();
+                }
                 
                 if (trip.cruises_num > 0)
                 {
-                    for (uint32_t count = 0; count < trip.cruises_num; count++)
+                    for (uint32_t count = 1; count <= trip.cruises_num; count++)
                     {
-                        Cruise cruise = trip[count];
-                        std::cout << (count + 1) << ") ";
-                        std::cout << "Из: " << station_id_to_name[cruise.from_id] << ", в: " << station_id_to_name[cruise.to_id];
-                        std::cout << ", Вид транспорта: " << vehicle_id_to_name[cruise.vehicle_id] << ", Время: " << cruise.cruise_time << ", Стоимость: " << cruise.cruise_cost << std::endl;
+                        Cruise cruise = trip[count - 1];
+                        std::string from = station_id_to_name[cruise.from_id];
+                        std::string to = station_id_to_name[cruise.to_id];
+                        std::string vehicle = vehicle_id_to_name[cruise.vehicle_id];
+                        uint32_t time = cruise.cruise_time;
+                        uint32_t cost = cruise.cruise_cost;
+                        printw("%i) Из: %s, в: %s, транспорт: %s, время: %i, стоимость: %i\n", count, from.c_str(), to.c_str(), vehicle.c_str(), time, cost);
+                        refresh();
                     }
                 }
                 else
                 {
-                    std::cout << "С помощью данных видов транспорта город прибытия не достижим из города отправления" << std::endl;
+                    addstr("С помощью данных видов транспорта город прибытия не достижим из города отправления\n");
+                    refresh();
                 }
-                continue;
+                addstr("Нажмите любую клавишу для перехода в меню\n");
+                refresh();
+                curs_set(0);
+                getch();
+                break;
             }
-            case 4:
+
+            case 3:
             {
-                std::string station_from, limit_cost_str;
-                std::cout << "Введите станцию отправления> ";
-                getline(std::cin, station_from);
+                clear();
+                char station_from_char[100];
+                addstr("Введите станцию отправления:\n");
+                refresh();
+                curs_set(1);
+                getstr(station_from_char);
+                std::string station_from(station_from_char);
                 while (station_name_to_id.find(station_from) == station_name_to_id.end())
                 {
-                    std::cout << "Введена недопустимая станция отправления. Повторите ввод" << std::endl;
-                    std::cout << "Введите станцию отправления> ";
-                    getline(std::cin, station_from);
+                    clear();
+                    addstr("Введена недопустимая станция отправления. Введите станцию отправления:\n");
+                    refresh();
+                    curs_set(1);
+                    getstr(station_from_char);
+                    station_from = station_from_char;
                 }
-                std::cout << "Введите лимит стоимости> ";
-                getline(std::cin, limit_cost_str);
-                uint32_t from_id, limit_cost;
+                clear();
+                char limit_cost_char[100];
+                addstr("Введите лимит стоимости:\n");
+                refresh();
+                curs_set(1);
+                getstr(limit_cost_char);
+                std::string limit_cost_str(limit_cost_char);               
                 while (limit_cost_str == "" || !is_digits(limit_cost_str) || stoi(limit_cost_str) <= 0)
                 {
-                    std::cout << "Введен недопустимый лимит стоимости. Повторите ввод" << std::endl;
-                    std::cout << "Введите лимит стоимости> ";
-                    getline(std::cin, limit_cost_str);
+                    clear();
+                    addstr("Введена недопустимый лимит стоимости. Введите лимит стоимости:\n");
+                    refresh();
+                    curs_set(1);
+                    getstr(limit_cost_char);
+                    limit_cost_str = limit_cost_char;
                 }
+                uint32_t from_id, limit_cost;
                 limit_cost = stoi(limit_cost_str);
                 from_id = station_name_to_id[station_from];
 
@@ -417,10 +609,14 @@ int main(int argc, char** argv)
                 }
                 auto end_operation = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> operation_time = end_operation - start_operation;
-                std::cout << "Время выполнения запроса: " << operation_time.count() << " сек." << std::endl;
+                printw("Время выполнения запроса: %f сек.\n", operation_time);
+                refresh();
 
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
-                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << " KiB" << std::endl;
+                {
+                    printw("Max RSS: %f KiB\n\n", (double)rusage.ru_maxrss);
+                    refresh();
+                }
 
                 if (!trips_map.empty())
                 {
@@ -429,46 +625,72 @@ int main(int argc, char** argv)
                         std::string station_from = station_id_to_name[station_from_and_trip.first];
                         Trip trip = station_from_and_trip.second;
 
-                        std::cout << "До станции '" << station_from << "':" << std::endl;
+                        printw("До станции '%s':\n", station_from.c_str());
+                        refresh();
 
-                        for (uint32_t count = 0; count < trip.cruises_num; count++)
+                        for (uint32_t count = 1; count <= trip.cruises_num; count++)
                         {
-                            Cruise cruise = trip[count];
-                            std::cout << (count + 1) << ") ";
-                            std::cout << "Из: " << station_id_to_name[cruise.from_id] << ", в: " << station_id_to_name[cruise.to_id];
-                            std::cout << ", Вид транспорта: " << vehicle_id_to_name[cruise.vehicle_id] << ", Время: " << cruise.cruise_time << ", Стоимость: " << cruise.cruise_cost << std::endl;
+                            Cruise cruise = trip[count - 1];
+                            std::string from = station_id_to_name[cruise.from_id];
+                            std::string to = station_id_to_name[cruise.to_id];
+                            std::string vehicle = vehicle_id_to_name[cruise.vehicle_id];
+                            uint32_t time = cruise.cruise_time;
+                            uint32_t cost = cruise.cruise_cost;
+                            printw("%i) Из: %s, в: %s, транспорт: %s, время: %i, стоимость: %i\n", count, from.c_str(), to.c_str(), vehicle.c_str(), time, cost);
+                            refresh();
                         }
                     }
                 }
                 else
                 {
-                    std::cout << "С помощью данных видов транспорта ни один из городов не достижим из города отправления за limit_cost денег" << std::endl;
+                    addstr("С помощью данных видов транспорта ни один из городов не достижим из города отправления за данный лимит стоимости\n");
+                    refresh();
                 }
-                continue;
+                addstr("Нажмите любую клавишу для перехода в меню\n");
+                refresh();
+                curs_set(0);
+                getch();
+                break;
             }
-            case 5:
+
+            case 4:
             {
-                std::string station_from, limit_time_str;
-                std::cout << "Введите станцию отправления> ";
-                getline(std::cin, station_from);
+                clear();
+                char station_from_char[100];
+                addstr("Введите станцию отправления:\n");
+                refresh();
+                curs_set(1);
+                getstr(station_from_char);
+                std::string station_from(station_from_char);
                 while (station_name_to_id.find(station_from) == station_name_to_id.end())
                 {
-                    std::cout << "Введена недопустимая станция отправления. Повторите ввод" << std::endl;
-                    std::cout << "Введите станцию отправления> ";
-                    getline(std::cin, station_from);
+                    clear();
+                    addstr("Введена недопустимая станция отправления. Введите станцию отправления:\n");
+                    refresh();
+                    curs_set(1);
+                    getstr(station_from_char);
+                    station_from = station_from_char;
                 }
-                std::cout << "Введите лимит времени> ";
-                getline(std::cin, limit_time_str);
-                uint32_t from_id, limit_time;
+                clear();
+                char limit_time_char[100];
+                addstr("Введите лимит времени:\n");
+                refresh();
+                curs_set(1);
+                getstr(limit_time_char);
+                std::string limit_time_str(limit_time_char);               
                 while (limit_time_str == "" || !is_digits(limit_time_str) || stoi(limit_time_str) <= 0)
                 {
-                    std::cout << "Введен недопустимый лимит времени. Повторите ввод" << std::endl;
-                    std::cout << "Введите лимит времени> ";
-                    getline(std::cin, limit_time_str);
+                    clear();
+                    addstr("Введена недопустимый лимит времени. Введите лимит времени:\n");
+                    refresh();
+                    curs_set(1);
+                    getstr(limit_time_char);
+                    limit_time_str = limit_time_char;
                 }
+                uint32_t from_id, limit_time;
                 limit_time = stoi(limit_time_str);
                 from_id = station_name_to_id[station_from];
-                
+
                 auto start_operation = std::chrono::high_resolution_clock::now();
 
                 std::vector<uint32_t> d(next_station_id, INF);
@@ -493,10 +715,14 @@ int main(int argc, char** argv)
                 }
                 auto end_operation = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> operation_time = end_operation - start_operation;
-                std::cout << "Время выполнения запроса: " << operation_time.count() << " сек." << std::endl;
+                printw("Время выполнения запроса: %f сек.\n", operation_time);
+                refresh();
 
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
-                    std::cout << "Max RSS: " << (double)rusage.ru_maxrss << " KiB" << std::endl;
+                {
+                    printw("Max RSS: %f KiB\n\n", (double)rusage.ru_maxrss);
+                    refresh();
+                }
 
                 if (!trips_map.empty())
                 {
@@ -505,38 +731,57 @@ int main(int argc, char** argv)
                         std::string station_from = station_id_to_name[station_from_and_trip.first];
                         Trip trip = station_from_and_trip.second;
 
-                        std::cout << "До станции '" << station_from << "':" << std::endl;
+                        printw("До станции '%s':\n", station_from.c_str());
+                        refresh();
 
-                        for (uint32_t count = 0; count < trip.cruises_num; count++)
+                        for (uint32_t count = 1; count <= trip.cruises_num; count++)
                         {
-                            Cruise cruise = trip[count];
-                            std::cout << (count + 1) << ") ";
-                            std::cout << "Из: " << station_id_to_name[cruise.from_id] << ", в: " << station_id_to_name[cruise.to_id];
-                            std::cout << ", Вид транспорта: " << vehicle_id_to_name[cruise.vehicle_id] << ", Время: " << cruise.cruise_time << ", Стоимость: " << cruise.cruise_cost << std::endl;
+                            Cruise cruise = trip[count - 1];
+                            std::string from = station_id_to_name[cruise.from_id];
+                            std::string to = station_id_to_name[cruise.to_id];
+                            std::string vehicle = vehicle_id_to_name[cruise.vehicle_id];
+                            uint32_t time = cruise.cruise_time;
+                            uint32_t cost = cruise.cruise_cost;
+                            printw("%i) Из: %s, в: %s, транспорт: %s, время: %i, стоимость: %i\n", count, from.c_str(), to.c_str(), vehicle.c_str(), time, cost);
+                            refresh();
                         }
                     }
                 }
                 else
                 {
-                    std::cout << "С помощью данных видов транспорта ни один из городов не достижим из города отправления за limit_time времени" << std::endl;
+                    addstr("С помощью данных видов транспорта ни один из городов не достижим из города отправления за данный лимит времени\n");
+                    refresh();
                 }
-                continue;
+                addstr("Нажмите любую клавишу для перехода в меню\n");
+                refresh();
+                curs_set(0);
+                getch();
+                break;
             }
+
+            case 5:
+            {
+                want_to_exit = true;
+                break;
+            }
+
             default:
             {
-                std::cout << "Неверный номер запроса. Введите 1/2/3/4/5 или 'quit'" << std::endl;
-                continue;
+                break;
             }
         }
     }
-    std::cout << "До свидания!" << std::endl;
+
+    endwin();
 
     auto end_program = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> program_duration = end_program - start_program;
     std::cout << "Время выполнения программы: " << program_duration.count() << " сек." << std::endl;
 
     if (getrusage(RUSAGE_SELF, &rusage) != -1)
+    {
         std::cout << "Max RSS: " << (double)rusage.ru_maxrss << " KiB" << std::endl;
+    }
 
     return 0;
 }
