@@ -5,10 +5,25 @@
 
 const uint32_t INF = UINT32_MAX;
 
-std::pair<std::vector<uint32_t>, std::vector<Cruise>> bfs(uint32_t s, uint32_t n, CruisesGraph graph, std::unordered_set<uint32_t> vehicles_types);
+void bfs(uint32_t s,
+         CruisesGraph graph,
+         std::unordered_set<uint32_t> vehicles_types,
+         std::vector<uint32_t> &d,
+         std::vector<Cruise> &p);
 
-std::pair<std::vector<uint32_t>, std::vector<Cruise>> dijkstra(uint32_t s, uint32_t n, CruisesGraph graph, uint32_t to_optimize, std::unordered_set<uint32_t> vehicles_types);
+void dijkstra(uint32_t s,
+              CruisesGraph graph,
+              uint32_t to_optimize,
+              std::unordered_set<uint32_t> vehicles_types,
+              std::vector<uint32_t> &d,
+              std::vector<Cruise> &p);
 
-std::tuple<std::vector<uint32_t>, std::vector<uint32_t>, std::vector<Cruise>> dijkstra_extra_cond(uint32_t s, uint32_t n, CruisesGraph graph, uint32_t to_optimize, std::unordered_set<uint32_t> vehicles_types);
+void dijkstra_extra_cond(uint32_t s,
+                         CruisesGraph graph,
+                         uint32_t to_optimize,
+                         std::unordered_set<uint32_t> vehicles_types,
+                         std::vector<uint32_t> &d,
+                         std::vector<uint32_t> &extra,
+                         std::vector<Cruise> &p);
 
 #endif

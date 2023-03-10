@@ -50,8 +50,4 @@ typedef std::pair<uint32_t, uint32_t> TwoInts;
 
 typedef std::tuple<uint32_t, uint32_t, uint32_t> ThreeInts;
 
-typedef std::pair<std::vector<uint32_t>, std::vector<Cruise>> BFS_Dijkstra_vectors_d_p;
-
-typedef std::tuple<std::vector<uint32_t>, std::vector<uint32_t>, std::vector<Cruise>> Dijkstra_vectors_d_extra_p;
-
 #endif

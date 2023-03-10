@@ -1,12 +1,14 @@
 #include "algorithms.hpp"
 
-BFS_Dijkstra_vectors_d_p bfs(uint32_t s, uint32_t n, CruisesGraph graph, std::unordered_set<uint32_t> vehicles_types)
+void bfs(uint32_t s,
+         CruisesGraph graph,
+         std::unordered_set<uint32_t> vehicles_types,
+         std::vector<uint32_t> &d,
+         std::vector<Cruise> &p)
 {
     std::queue<uint32_t> q;
     q.push(s);
     
-    std::vector<uint32_t> d(n, INF);
-    std::vector<Cruise> p(n);
     d[s] = 0;
     
     while (!q.empty()) {
@@ -32,17 +34,20 @@ BFS_Dijkstra_vectors_d_p bfs(uint32_t s, uint32_t n, CruisesGraph graph, std::un
             }
         }
     }
+}
 
-    return {d, p};
-};
-
-BFS_Dijkstra_vectors_d_p dijkstra(uint32_t s, uint32_t n, CruisesGraph graph, uint32_t to_optimize, std::unordered_set<uint32_t> vehicles_types)
+void dijkstra(uint32_t s,
+              CruisesGraph graph,
+              uint32_t to_optimize,
+              std::unordered_set<uint32_t> vehicles_types,
+              std::vector<uint32_t> &d,
+              std::vector<Cruise> &p)
 {
-    std::vector<uint32_t> d(n, INF);
-    std::vector<Cruise> p(n);
-    d[s] = 0;
     std::priority_queue<TwoInts, std::vector<TwoInts>, std::greater<TwoInts>> q;
     q.push({0, s});
+
+    d[s] = 0;
+
     while (!q.empty())
     {
         TwoInts top_pair = q.top();
@@ -82,18 +87,22 @@ BFS_Dijkstra_vectors_d_p dijkstra(uint32_t s, uint32_t n, CruisesGraph graph, ui
             }
         }
     }
-    return {d, p};
 }
 
-Dijkstra_vectors_d_extra_p dijkstra_extra_cond(uint32_t s, uint32_t n, CruisesGraph graph, uint32_t to_optimize, std::unordered_set<uint32_t> vehicles_types)
+void dijkstra_extra_cond(uint32_t s,
+                         CruisesGraph graph,
+                         uint32_t to_optimize,
+                         std::unordered_set<uint32_t> vehicles_types,
+                         std::vector<uint32_t> &d,
+                         std::vector<uint32_t> &extra,
+                         std::vector<Cruise> &p)
 {
-    std::vector<uint32_t> d(n, INF);
-    std::vector<uint32_t> extra(n, INF);
-    std::vector<Cruise> p(n);
-    d[s] = 0;
-    extra[s] = 0;
     std::priority_queue<ThreeInts, std::vector<ThreeInts>, std::greater<ThreeInts>> q;
     q.push({0, 0, s});
+
+    d[s] = 0;
+    extra[s] = 0;
+    
     while (!q.empty())
     {
         ThreeInts top_triad = q.top();
@@ -141,5 +150,4 @@ Dijkstra_vectors_d_extra_p dijkstra_extra_cond(uint32_t s, uint32_t n, CruisesGr
             }
         }
     }
-    return {d, extra, p};
 }

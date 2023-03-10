@@ -204,15 +204,19 @@ int main(int argc, char** argv)
                 to_id = station_name_to_id[station_to];
 
                 auto start_operation = std::chrono::high_resolution_clock::now();
-                Dijkstra_vectors_d_extra_p d_extra_p = dijkstra_extra_cond(from_id, next_station_id, graph, 0, vehicles_types);
+                
+                std::vector<uint32_t> d(next_station_id, INF);
+                std::vector<uint32_t> extra(next_station_id, INF);
+                std::vector<Cruise> p(next_station_id);
+                dijkstra_extra_cond(from_id, graph, 0, vehicles_types, d, extra, p);
 
                 Trip trip;
                 uint32_t current_station = to_id;
-                if (std::get<0>(d_extra_p)[to_id] < INF)
+                if (d[to_id] < INF)
                 {
                     while (current_station != from_id)
                     {
-                        Cruise next_cruise = std::get<2>(d_extra_p)[current_station];
+                        Cruise next_cruise = p[current_station];
                         trip += next_cruise;
                         current_station = next_cruise.from_id;
                     }
@@ -264,15 +268,18 @@ int main(int argc, char** argv)
                 to_id = station_name_to_id[station_to];
 
                 auto start_operation = std::chrono::high_resolution_clock::now();
-                BFS_Dijkstra_vectors_d_p d_p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types);
+
+                std::vector<uint32_t> d(next_station_id, INF);
+                std::vector<Cruise> p(next_station_id);
+                dijkstra(from_id, graph, 1, vehicles_types, d, p);
 
                 Trip trip;
                 uint32_t current_station = to_id;
-                if (d_p.first[to_id] < INF)
+                if (d[to_id] < INF)
                 {
                     while (current_station != from_id)
                     {
-                        Cruise next_cruise = d_p.second[current_station];
+                        Cruise next_cruise = p[current_station];
                         trip += next_cruise;
                         current_station = next_cruise.from_id;
                     }
@@ -324,15 +331,18 @@ int main(int argc, char** argv)
                 to_id = station_name_to_id[station_to];
 
                 auto start_operation = std::chrono::high_resolution_clock::now();
-                BFS_Dijkstra_vectors_d_p d_p = bfs(from_id, next_station_id, graph, vehicles_types);
+
+                std::vector<uint32_t> d(next_station_id, INF);
+                std::vector<Cruise> p(next_station_id);
+                bfs(from_id, graph, vehicles_types, d, p);
 
                 Trip trip;
                 uint32_t current_station = to_id;
-                if (d_p.first[to_id] < INF)
+                if (d[to_id] < INF)
                 {
                     while (current_station != from_id)
                     {
-                        Cruise next_cruise = d_p.second[current_station];
+                        Cruise next_cruise = p[current_station];
                         trip += next_cruise;
                         current_station = next_cruise.from_id;
                     }
@@ -384,18 +394,21 @@ int main(int argc, char** argv)
                 from_id = station_name_to_id[station_from];
 
                 auto start_operation = std::chrono::high_resolution_clock::now();
-                BFS_Dijkstra_vectors_d_p d_p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types);
+
+                std::vector<uint32_t> d(next_station_id, INF);
+                std::vector<Cruise> p(next_station_id);
+                dijkstra(from_id, graph, 1, vehicles_types, d, p);
 
                 std::map<uint32_t, Trip> trips_map;
                 for (uint32_t i = 0; i < next_station_id; i++)
                 {
-                    if (i != from_id && d_p.first[i] <= limit_cost)
+                    if (i != from_id && d[i] <= limit_cost)
                     {
                         Trip trip;
                         uint32_t current_station = i;
                         while (current_station != from_id)
                         {
-                            Cruise next_cruise = d_p.second[current_station];
+                            Cruise next_cruise = p[current_station];
                             trip += next_cruise;
                             current_station = next_cruise.from_id;
                         }
@@ -457,18 +470,21 @@ int main(int argc, char** argv)
                 from_id = station_name_to_id[station_from];
                 
                 auto start_operation = std::chrono::high_resolution_clock::now();
-                BFS_Dijkstra_vectors_d_p d_p = dijkstra(from_id, next_station_id, graph, 0, vehicles_types);
+
+                std::vector<uint32_t> d(next_station_id, INF);
+                std::vector<Cruise> p(next_station_id);
+                dijkstra(from_id, graph, 0, vehicles_types, d, p);
 
                 std::map<uint32_t, Trip> trips_map;
                 for (uint32_t i = 0; i < next_station_id; i++)
                 {
-                    if (i != from_id && d_p.first[i] <= limit_time)
+                    if (i != from_id && d[i] <= limit_time)
                     {
                         Trip trip;
                         uint32_t current_station = i;
                         while (current_station != from_id)
                         {
-                            Cruise next_cruise = d_p.second[current_station];
+                            Cruise next_cruise = p[current_station];
                             trip += next_cruise;
                             current_station = next_cruise.from_id;
                         }
