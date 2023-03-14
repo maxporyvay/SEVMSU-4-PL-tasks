@@ -17,12 +17,16 @@ Cruise::Cruise(uint32_t f_id, uint32_t t_id, uint32_t v_id, uint32_t t, uint32_t
 Trip::Trip()
 {
     cruises_num = 0;
+    trip_cost = 0;
+    trip_time = 0;
 }
 
 Trip Trip::operator+(Cruise &cruise)
 {
     cruises_vector.push_back(cruise);
     cruises_num++;
+    trip_cost += cruise.cruise_cost;
+    trip_time += cruise.cruise_time;
     return *this;
 }
 

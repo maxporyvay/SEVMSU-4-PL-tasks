@@ -28,6 +28,10 @@ struct Trip
 
     uint32_t cruises_num;
 
+    uint32_t trip_cost;
+
+    uint32_t trip_time;
+
     Trip();
 
     Trip operator+(Cruise &cruise);

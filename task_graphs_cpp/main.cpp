@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <chrono>
+#include <ctime>
 #include <algorithm>
 #include <sys/resource.h>
 #include <ncurses.h>
@@ -47,6 +48,9 @@ int main(int argc, char** argv)
 
     bool want_to_exit = false;
     std::ofstream log("log.txt", std::ios_base::app);
+    
+    std::time_t timestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    log << std::ctime(&timestamp) << std::endl;
 
     std::ifstream in(filename);
     std::string line;
@@ -443,6 +447,12 @@ int main(int argc, char** argv)
                         log << count << ") Из: " << from << ", в: " << to << ", транспорт: " << vehicle;
                         log << ", время: " << time << ", стоимость: " << cost << std::endl;
                     }
+                    printw("Время пути: %i\n", trip.trip_time);
+                    refresh();
+                    log << "Время пути: " << trip.trip_time << std::endl;
+                    printw("Стоимость пути: %i\n", trip.trip_cost);
+                    refresh();
+                    log << "Стоимость пути: " << trip.trip_cost << std::endl;
                     log << std::endl;
                 }
                 else
@@ -539,6 +549,12 @@ int main(int argc, char** argv)
                         log << count << ") Из: " << from << ", в: " << to << ", транспорт: " << vehicle;
                         log << ", время: " << time << ", стоимость: " << cost << std::endl;
                     }
+                    printw("Время пути: %i\n", trip.trip_time);
+                    refresh();
+                    log << "Время пути: " << trip.trip_time << std::endl;
+                    printw("Стоимость пути: %i\n", trip.trip_cost);
+                    refresh();
+                    log << "Стоимость пути: " << trip.trip_cost << std::endl;
                     log << std::endl;
                 }
                 else
@@ -636,6 +652,12 @@ int main(int argc, char** argv)
                         log << count << ") Из: " << from << ", в: " << to << ", транспорт: " << vehicle;
                         log << ", время: " << time << ", стоимость: " << cost << std::endl;
                     }
+                    printw("Время пути: %i\n", trip.trip_time);
+                    refresh();
+                    log << "Время пути: " << trip.trip_time << std::endl;
+                    printw("Стоимость пути: %i\n", trip.trip_cost);
+                    refresh();
+                    log << "Стоимость пути: " << trip.trip_cost << std::endl;
                     log << std::endl;
                 }
                 else
@@ -746,6 +768,12 @@ int main(int argc, char** argv)
                             log << count << ") Из: " << from << ", в: " << to << ", транспорт: " << vehicle;
                             log << ", время: " << time << ", стоимость: " << cost << std::endl;
                         }
+                        printw("Время пути: %i\n", trip.trip_time);
+                        refresh();
+                        log << "Время пути: " << trip.trip_time << std::endl;
+                        printw("Стоимость пути: %i\n", trip.trip_cost);
+                        refresh();
+                        log << "Стоимость пути: " << trip.trip_cost << std::endl;
                     }
                     log << std::endl;
                 }
@@ -858,6 +886,12 @@ int main(int argc, char** argv)
                             log << count << ") Из: " << from << ", в: " << to << ", транспорт: " << vehicle;
                             log << ", время: " << time << ", стоимость: " << cost << std::endl;
                         }
+                        printw("Время пути: %i\n", trip.trip_time);
+                        refresh();
+                        log << "Время пути: " << trip.trip_time << std::endl;
+                        printw("Стоимость пути: %i\n", trip.trip_cost);
+                        refresh();
+                        log << "Стоимость пути: " << trip.trip_cost << std::endl;
                     }
                     log << std::endl;
                 }
