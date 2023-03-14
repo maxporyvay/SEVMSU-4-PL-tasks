@@ -170,6 +170,7 @@ int main(int argc, char** argv)
     // }
 
     initscr();
+    scrollok(stdscr, true);
     keypad(stdscr, true);
     noecho();
 
