@@ -8,6 +8,15 @@
 #include <sys/resource.h>
 #include <ncurses.h>
 
+#define OPTIONS_NUM 6
+
+#define MINCOST_MINTIME_MODE 0
+#define MINCOST_MODE 1
+#define MINSTATIONSNUM_MODE 2
+#define LIMITCOST_MODE 3
+#define LIMITTIME_MODE 4
+#define WANT_TO_EXIT 5
+
 bool is_digits(const std::string &str)
 {
     return std::all_of(str.begin(), str.end(), ::isdigit);
@@ -143,29 +152,29 @@ int main(int argc, char** argv)
     // }
 
     initscr();
+    keypad(stdscr, true);
+    noecho();
     bool want_to_exit = false;
 
     while (!want_to_exit)
     {
         uint32_t current_item_index = 0;
-        bool choice_made = false;
-        noecho();
-
+        bool choice_made = false;       
+ 
         while (!choice_made)
         {
             clear();
             curs_set(0);
-            keypad(stdscr, true); 
             addstr("Выберите желаемый режим работы программы:\n\n");
             refresh();
-            const char *choices[6] = {"Нахождение пути минимальной стоимости среди кратчайших путей между двумя городами",
+            const char *choices[OPTIONS_NUM] = {"Нахождение пути минимальной стоимости среди кратчайших путей между двумя городами",
                                     "Нахождение пути минимальной стоимости между двумя городами",
                                     "Нахождение пути между двумя городами с минимальным числом пересадок",
                                     "Нахождение городов, достижимых из города отправления не более чем за лимит денег, и путей к ним",
                                     "Нахождение городов, достижимых из города отправления не более чем за лимит времени, и путей к ним",
                                     "Выйти из программы"};
             
-            for (uint32_t i = 0; i < 6; i++)
+            for (uint32_t i = 0; i < OPTIONS_NUM; i++)
             {
                 if (i == current_item_index)
                 {
@@ -190,14 +199,14 @@ int main(int argc, char** argv)
                     }
                     else
                     {
-                        current_item_index = 5;
+                        current_item_index = OPTIONS_NUM -1;
                     }
                     break;
                 }
 
                 case KEY_DOWN:
                 {
-                    if (current_item_index < 5)
+                    if (current_item_index < OPTIONS_NUM - 1)
                     {
                         current_item_index++;
                     }
@@ -220,63 +229,120 @@ int main(int argc, char** argv)
                 }
             }
         }
-        keypad(stdscr, false); 
 
         std::unordered_set<uint32_t> vehicles_types;
 
-        if (current_item_index >= 0 && current_item_index <= 4)
+        if (current_item_index >= 0 && current_item_index <= OPTIONS_NUM - 2)
         {
-            clear();
-            echo();
-            char vehicles_types_num_strchar[100];
-            addstr("Введите число допустимых видов транспорта:\n");
-            refresh();
-            curs_set(1);
-            getstr(vehicles_types_num_strchar);
-            std::string vehicles_types_num_str(vehicles_types_num_strchar);
-            while (vehicles_types_num_str == "" || !is_digits(vehicles_types_num_str) || stoi(vehicles_types_num_str) <= 0)
+            bool vehicles_chosen = false;
+            uint32_t current_vehicle_id = 0;
+            char choose_sym = '*';
+
+            while (!vehicles_chosen)
             {
                 clear();
-                addstr("Ошибка ввода. Введите число подходящих видов транспорта:\n");
+                curs_set(0);
+                addstr("Выберите подходящие виды транспорта:\n\n");
                 refresh();
-                curs_set(1);
-                getstr(vehicles_types_num_strchar);
-                vehicles_types_num_str = vehicles_types_num_strchar;
-            }
-            uint32_t vehicles_types_num = stoi(vehicles_types_num_str);
-            
-            for (uint32_t i = 1; i <= vehicles_types_num; i++)
-            {
-                clear();
-                printw("Введите подходящий вид транспорта #%i:\n", i);
-                refresh();
-                char vehicle_type_char[100];
-                curs_set(1);
-                getstr(vehicle_type_char);
-                std::string vehicle_type(vehicle_type_char);
-                while (vehicle_name_to_id.find(vehicle_type) == vehicle_name_to_id.end())
+                
+                for (uint32_t vehicle_id = 0; vehicle_id < next_vehicle_id; vehicle_id++)
                 {
-                    clear();
-                    printw("Введен несуществующий вид транспорта. Введите подходящий вид транспорта #%i:\n", i);
+                    if (vehicle_id == current_vehicle_id)
+                    {
+                        attron(A_STANDOUT);
+                    }
+                    if (vehicles_types.find(vehicle_id) != vehicles_types.end())
+                    {
+                        printw("%c %s\n", choose_sym, vehicle_id_to_name[vehicle_id].c_str());
+                    }
+                    else
+                    {
+                        printw("  %s\n", vehicle_id_to_name[vehicle_id].c_str());
+                    }
                     refresh();
-                    curs_set(1);
-                    getstr(vehicle_type_char);
-                    vehicle_type = vehicle_type_char;
+                    if (vehicle_id == current_vehicle_id)
+                    {
+                        attroff(A_STANDOUT);
+                    }
                 }
-                vehicles_types.insert(vehicle_name_to_id[vehicle_type]);
+                addstr("\n");
+                refresh();
+                if (current_vehicle_id == next_vehicle_id)
+                {
+                    attron(A_STANDOUT);
+                }
+                addstr("Далее");
+                if (current_vehicle_id == next_vehicle_id)
+                {
+                    attroff(A_STANDOUT);
+                }
+                refresh();
+
+                switch (getch())
+                {
+                    case KEY_UP:
+                    {
+                        if (current_vehicle_id > 0)
+                        {
+                            current_vehicle_id--; 
+                        }
+                        else
+                        {
+                            current_vehicle_id = next_vehicle_id;
+                        }
+                        break;
+                    }
+
+                    case KEY_DOWN:
+                    {
+                        if (current_vehicle_id < next_vehicle_id)
+                        {
+                            current_vehicle_id++;
+                        }
+                        else
+                        {
+                            current_vehicle_id = 0;
+                        }
+                        break;
+                    }
+                        
+                    case (int)'\n':
+                    {
+                        if (current_vehicle_id == next_vehicle_id)
+                        {
+                            vehicles_chosen = true;
+                        }
+                        else if (vehicles_types.find(current_vehicle_id) == vehicles_types.end())
+                        {
+                            vehicles_types.insert(current_vehicle_id);
+                        }
+                        else
+                        {
+                            vehicles_types.erase(current_vehicle_id);
+                        }
+                        break;
+                    }
+
+                    default:
+                    {
+                        break;
+                    }
+                }
             }
         }
 
+        echo();
+
         switch (current_item_index)
         {
-            case 0:
+            case MINCOST_MINTIME_MODE:
             {
                 clear();
                 char station_from_char[100];
                 addstr("Введите станцию отправления:\n");
                 refresh();
                 curs_set(1);
-                getstr(station_from_char);
+                getnstr(station_from_char, 100);
                 std::string station_from(station_from_char);
                 while (station_name_to_id.find(station_from) == station_name_to_id.end())
                 {
@@ -284,7 +350,7 @@ int main(int argc, char** argv)
                     addstr("Введена недопустимая станция отправления. Введите станцию отправления:\n");
                     refresh();
                     curs_set(1);
-                    getstr(station_from_char);
+                    getnstr(station_from_char, 100);
                     station_from = station_from_char;
                 }
                 clear();
@@ -292,7 +358,7 @@ int main(int argc, char** argv)
                 addstr("Введите станцию прибытия:\n");
                 refresh();
                 curs_set(1);
-                getstr(station_to_char);
+                getnstr(station_to_char, 100);
                 std::string station_to(station_to_char);
                 while (station_name_to_id.find(station_to) == station_name_to_id.end())
                 {
@@ -300,7 +366,7 @@ int main(int argc, char** argv)
                     addstr("Введена недопустимая станция прибытия. Введите станцию прибытия:\n");
                     refresh();
                     curs_set(1);
-                    getstr(station_to_char);
+                    getnstr(station_to_char, 100);
                     station_to = station_to_char;
                 }
                 uint32_t from_id, to_id;
@@ -362,14 +428,14 @@ int main(int argc, char** argv)
                 break;
             }
 
-            case 1:
+            case MINCOST_MODE:
             {
                 clear();
                 char station_from_char[100];
                 addstr("Введите станцию отправления:\n");
                 refresh();
                 curs_set(1);
-                getstr(station_from_char);
+                getnstr(station_from_char, 100);
                 std::string station_from(station_from_char);
                 while (station_name_to_id.find(station_from) == station_name_to_id.end())
                 {
@@ -377,7 +443,7 @@ int main(int argc, char** argv)
                     addstr("Введена недопустимая станция отправления. Введите станцию отправления:\n");
                     refresh();
                     curs_set(1);
-                    getstr(station_from_char);
+                    getnstr(station_from_char, 100);
                     station_from = station_from_char;
                 }
                 clear();
@@ -385,7 +451,7 @@ int main(int argc, char** argv)
                 addstr("Введите станцию прибытия:\n");
                 refresh();
                 curs_set(1);
-                getstr(station_to_char);
+                getnstr(station_to_char, 100);
                 std::string station_to(station_to_char);
                 while (station_name_to_id.find(station_to) == station_name_to_id.end())
                 {
@@ -393,7 +459,7 @@ int main(int argc, char** argv)
                     addstr("Введена недопустимая станция прибытия. Введите станцию прибытия:\n");
                     refresh();
                     curs_set(1);
-                    getstr(station_to_char);
+                    getnstr(station_to_char, 100);
                     station_to = station_to_char;
                 }
                 uint32_t from_id, to_id;
@@ -454,14 +520,14 @@ int main(int argc, char** argv)
                 break;
             }
 
-            case 2:
+            case MINSTATIONSNUM_MODE:
             {
                 clear();
                 char station_from_char[100];
                 addstr("Введите станцию отправления:\n");
                 refresh();
                 curs_set(1);
-                getstr(station_from_char);
+                getnstr(station_from_char, 100);
                 std::string station_from(station_from_char);
                 while (station_name_to_id.find(station_from) == station_name_to_id.end())
                 {
@@ -469,7 +535,7 @@ int main(int argc, char** argv)
                     addstr("Введена недопустимая станция отправления. Введите станцию отправления:\n");
                     refresh();
                     curs_set(1);
-                    getstr(station_from_char);
+                    getnstr(station_from_char, 100);
                     station_from = station_from_char;
                 }
                 clear();
@@ -477,7 +543,7 @@ int main(int argc, char** argv)
                 addstr("Введите станцию прибытия:\n");
                 refresh();
                 curs_set(1);
-                getstr(station_to_char);
+                getnstr(station_to_char, 100);
                 std::string station_to(station_to_char);
                 while (station_name_to_id.find(station_to) == station_name_to_id.end())
                 {
@@ -485,7 +551,7 @@ int main(int argc, char** argv)
                     addstr("Введена недопустимая станция прибытия. Введите станцию прибытия:\n");
                     refresh();
                     curs_set(1);
-                    getstr(station_to_char);
+                    getnstr(station_to_char, 100);
                     station_to = station_to_char;
                 }
                 uint32_t from_id, to_id;
@@ -547,14 +613,14 @@ int main(int argc, char** argv)
                 break;
             }
 
-            case 3:
+            case LIMITCOST_MODE:
             {
                 clear();
                 char station_from_char[100];
                 addstr("Введите станцию отправления:\n");
                 refresh();
                 curs_set(1);
-                getstr(station_from_char);
+                getnstr(station_from_char, 100);
                 std::string station_from(station_from_char);
                 while (station_name_to_id.find(station_from) == station_name_to_id.end())
                 {
@@ -562,7 +628,7 @@ int main(int argc, char** argv)
                     addstr("Введена недопустимая станция отправления. Введите станцию отправления:\n");
                     refresh();
                     curs_set(1);
-                    getstr(station_from_char);
+                    getnstr(station_from_char, 100);
                     station_from = station_from_char;
                 }
                 clear();
@@ -570,7 +636,7 @@ int main(int argc, char** argv)
                 addstr("Введите лимит стоимости:\n");
                 refresh();
                 curs_set(1);
-                getstr(limit_cost_char);
+                getnstr(limit_cost_char, 100);
                 std::string limit_cost_str(limit_cost_char);               
                 while (limit_cost_str == "" || !is_digits(limit_cost_str) || stoi(limit_cost_str) <= 0)
                 {
@@ -578,7 +644,7 @@ int main(int argc, char** argv)
                     addstr("Введена недопустимый лимит стоимости. Введите лимит стоимости:\n");
                     refresh();
                     curs_set(1);
-                    getstr(limit_cost_char);
+                    getnstr(limit_cost_char, 100);
                     limit_cost_str = limit_cost_char;
                 }
                 uint32_t from_id, limit_cost;
@@ -653,14 +719,14 @@ int main(int argc, char** argv)
                 break;
             }
 
-            case 4:
+            case LIMITTIME_MODE:
             {
                 clear();
                 char station_from_char[100];
                 addstr("Введите станцию отправления:\n");
                 refresh();
                 curs_set(1);
-                getstr(station_from_char);
+                getnstr(station_from_char, 100);
                 std::string station_from(station_from_char);
                 while (station_name_to_id.find(station_from) == station_name_to_id.end())
                 {
@@ -668,7 +734,7 @@ int main(int argc, char** argv)
                     addstr("Введена недопустимая станция отправления. Введите станцию отправления:\n");
                     refresh();
                     curs_set(1);
-                    getstr(station_from_char);
+                    getnstr(station_from_char, 100);
                     station_from = station_from_char;
                 }
                 clear();
@@ -676,7 +742,7 @@ int main(int argc, char** argv)
                 addstr("Введите лимит времени:\n");
                 refresh();
                 curs_set(1);
-                getstr(limit_time_char);
+                getnstr(limit_time_char, 100);
                 std::string limit_time_str(limit_time_char);               
                 while (limit_time_str == "" || !is_digits(limit_time_str) || stoi(limit_time_str) <= 0)
                 {
@@ -684,7 +750,7 @@ int main(int argc, char** argv)
                     addstr("Введена недопустимый лимит времени. Введите лимит времени:\n");
                     refresh();
                     curs_set(1);
-                    getstr(limit_time_char);
+                    getnstr(limit_time_char, 100);
                     limit_time_str = limit_time_char;
                 }
                 uint32_t from_id, limit_time;
@@ -759,7 +825,7 @@ int main(int argc, char** argv)
                 break;
             }
 
-            case 5:
+            case WANT_TO_EXIT:
             {
                 want_to_exit = true;
                 break;
