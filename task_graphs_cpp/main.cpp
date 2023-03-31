@@ -614,7 +614,6 @@ int main(int argc, char** argv)
                 auto start_operation = std::chrono::high_resolution_clock::now();
                 
                 std::vector<uint32_t> d(next_station_id, INF);
-                std::vector<uint32_t> extra(next_station_id, INF);
                 std::vector<Cruise> p(next_station_id);
                 bfs(from_id, graph, vehicles_types, d, p);
 

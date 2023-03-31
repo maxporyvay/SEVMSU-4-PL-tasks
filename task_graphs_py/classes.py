@@ -66,6 +66,9 @@ class MinHeap:
         self.heap.pop()
         return ans
 
+    def size(self):
+        return len(self.heap)
+
 
 class Cruise:
     def __init__(self, f_id=-1, t_id=-1, v_id=-1, t=-1, c=-1)

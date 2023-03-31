@@ -1,15 +1,9 @@
 from task_graphs_py.classes import INF
+from task_graphs_py.algorithms import bfs, dijkstra, dijkstra_extra_cond
 
-# #include "algorithms.hpp"
-# #include "classes.hpp"
+import curses
 
-# #include <iostream>
-# #include <fstream>
-# #include <chrono>
-# #include <ctime>
-# #include <algorithm>
 # #include <sys/resource.h>
-# #include <ncurses.h>
 
 # #define OPTIONS_NUM 6
 
@@ -410,10 +404,7 @@ from task_graphs_py.classes import INF
 
 #                 auto start_operation = std::chrono::high_resolution_clock::now();
                 
-#                 std::vector<uint32_t> d(next_station_id, INF);
-#                 std::vector<uint32_t> extra(next_station_id, INF);
-#                 std::vector<Cruise> p(next_station_id);
-#                 dijkstra_extra_cond(from_id, graph, 0, vehicles_types, d, extra, p);
+#                 d, extra, p = dijkstra_extra_cond(from_id, next_station_id, graph, 0, vehicles_types)
 
 #                 Trip trip;
 #                 uint32_t current_station = to_id;
@@ -513,9 +504,7 @@ from task_graphs_py.classes import INF
 
 #                 auto start_operation = std::chrono::high_resolution_clock::now();
                 
-#                 std::vector<uint32_t> d(next_station_id, INF);
-#                 std::vector<Cruise> p(next_station_id);
-#                 dijkstra(from_id, graph, 1, vehicles_types, d, p);
+#                 d, p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types);
 
 #                 Trip trip;
 #                 uint32_t current_station = to_id;
@@ -615,10 +604,7 @@ from task_graphs_py.classes import INF
 
 #                 auto start_operation = std::chrono::high_resolution_clock::now();
                 
-#                 std::vector<uint32_t> d(next_station_id, INF);
-#                 std::vector<uint32_t> extra(next_station_id, INF);
-#                 std::vector<Cruise> p(next_station_id);
-#                 bfs(from_id, graph, vehicles_types, d, p);
+#                 d, p = bfs(from_id, next_station_id, graph, vehicles_types)
 
 #                 Trip trip;
 #                 uint32_t current_station = to_id;
@@ -718,9 +704,7 @@ from task_graphs_py.classes import INF
 
 #                 auto start_operation = std::chrono::high_resolution_clock::now();
 
-#                 std::vector<uint32_t> d(next_station_id, INF);
-#                 std::vector<Cruise> p(next_station_id);
-#                 dijkstra(from_id, graph, 1, vehicles_types, d, p);
+#                 d, p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types)
 
 #                 std::map<uint32_t, Trip> trips_map;
 #                 for (uint32_t i = 0; i < next_station_id; i++)
@@ -836,9 +820,7 @@ from task_graphs_py.classes import INF
 
 #                 auto start_operation = std::chrono::high_resolution_clock::now();
 
-#                 std::vector<uint32_t> d(next_station_id, INF);
-#                 std::vector<Cruise> p(next_station_id);
-#                 dijkstra(from_id, graph, 0, vehicles_types, d, p);
+#                 dijkstra(from_id, next_station_id, graph, 0, vehicles_types)
 
 #                 std::map<uint32_t, Trip> trips_map;
 #                 for (uint32_t i = 0; i < next_station_id; i++)

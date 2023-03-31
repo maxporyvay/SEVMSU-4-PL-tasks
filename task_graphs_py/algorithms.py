@@ -1,154 +1,104 @@
-from task_graphs_py.classes import INF
+from task_graphs_py.classes import INF, Queue, MinHeap, Cruise, Trip, CruisesGraph
 
 
-# void bfs(uint32_t s,
-#          CruisesGraph graph,
-#          std::unordered_set<uint32_t> vehicles_types,
-#          std::vector<uint32_t> &d,
-#          std::vector<Cruise> &p)
-# {
-#     std::queue<uint32_t> q;
-#     q.push(s);
+def bfs(s, n, graph, vehicles_types):
+    d = [INF] * n
+    p = [INF] * n
+
+    q = Queue(INF)
+    q.push(s)
     
-#     d[s] = 0;
+    d[s] = 0
     
-#     while (!q.empty()) {
-#         uint32_t v = q.front();
-#         q.pop();
-#         for (auto cruises_map : graph.getCruisesMapFromStation(v)) {
-#             uint32_t u = cruises_map.first;
-#             std::vector<Cruise> cruises = cruises_map.second;
-#             bool flag = false;
-#             Cruise best_cruise;
-#             for (Cruise cruise : cruises)
-#             {
-#                 if (vehicles_types.find(cruise.vehicle_id) != vehicles_types.end())
-#                 {
-#                     flag = true;
-#                     best_cruise = cruise;
-#                 }
-#             }
-#             if (flag && d[u] == INF) {
-#                 q.push(u);
-#                 d[u] = d[v] + 1;
-#                 p[u] = best_cruise;
-#             }
-#         }
-#     }
-# }
+    while q.size() > 0:
+        v = q.pop()
+        for u, cruises in graph.getCruisesMapFromStation(v):
+            flag = False
+            best_cruise = -1
+            for cruise in cruises:
+                if cruise.vehicle_id in vehicles_types:
+                    flag = True
+                    best_cruise = cruise
+            if flag and d[u] == INF:
+                q.push(u)
+                d[u] = d[v] + 1
+                p[u] = best_cruise
 
-# void dijkstra(uint32_t s,
-#               CruisesGraph graph,
-#               uint32_t to_optimize,
-#               std::unordered_set<uint32_t> vehicles_types,
-#               std::vector<uint32_t> &d,
-#               std::vector<Cruise> &p)
-# {
-#     std::priority_queue<TwoInts, std::vector<TwoInts>, std::greater<TwoInts>> q;
-#     q.push({0, s});
+    return d, p
 
-#     d[s] = 0;
 
-#     while (!q.empty())
-#     {
-#         TwoInts top_pair = q.top();
-#         uint32_t cur_d = top_pair.first;
-#         uint32_t v = top_pair.second;
-#         q.pop();
-#         if (cur_d > d[v])
-#             continue;
-#         for (auto cruises_map : graph.getCruisesMapFromStation(v))
-#         {
-#             uint32_t u = cruises_map.first;
-#             std::vector<Cruise> cruises = cruises_map.second;
-#             uint32_t min_w = INF;
-#             Cruise cruise_for_min_w;
-#             for (Cruise cruise : cruises)
-#             {
-#                 uint32_t w;
-#                 if (to_optimize == 0)
-#                 {
-#                     w = cruise.cruise_time;
-#                 }
-#                 else if (to_optimize == 1)
-#                 {
-#                     w = cruise.cruise_cost;
-#                 }
-#                 if (vehicles_types.find(cruise.vehicle_id) != vehicles_types.end() && w < min_w)
-#                 {
-#                     min_w = w;
-#                     cruise_for_min_w = cruise;
-#                 }
-#             }
-#             if (min_w < INF && d[u] > d[v] + min_w)
-#             {
-#                 d[u] = d[v] + min_w;
-#                 p[u] = cruise_for_min_w;
-#                 q.push({d[u], u});
-#             }
-#         }
-#     }
-# }
+def dijkstra(s, n, graph, to_optimize, vehicles_types):
+    d = [INF] * n
+    p = [INF] * n
 
-# void dijkstra_extra_cond(uint32_t s,
-#                          CruisesGraph graph,
-#                          uint32_t to_optimize,
-#                          std::unordered_set<uint32_t> vehicles_types,
-#                          std::vector<uint32_t> &d,
-#                          std::vector<uint32_t> &extra,
-#                          std::vector<Cruise> &p)
-# {
-#     std::priority_queue<ThreeInts, std::vector<ThreeInts>, std::greater<ThreeInts>> q;
-#     q.push({0, 0, s});
+    q = MinHeap()
+    q.insert((0, s))
 
-#     d[s] = 0;
-#     extra[s] = 0;
+    d[s] = 0
+
+    while q.size() > 0:
+        cur_d, v = q.extract()
+        if cur_d > d[v]:
+            continue
+        for u, cruises in graph.getCruisesMapFromStation(v):
+            min_w = INF
+            cruise_for_min_w = -1
+            for cruise in cruises:
+                w = -1
+                if to_optimize == 0:
+                    w = cruise.cruise_time
+                elif to_optimize == 1:
+                    w = cruise.cruise_cost
+                if cruise.vehicle_id in vehicles_types and w < min_w:
+                    min_w = w
+                    cruise_for_min_w = cruise
+            if min_w < INF and d[u] > d[v] + min_w:
+                d[u] = d[v] + min_w
+                p[u] = cruise_for_min_w
+                q.insert((d[u], u))
+
+    return d, p
+
+
+def dijkstra_extra_cond(s, n, graph, to_optimize, vehicles_types)
+{
+    d = [INF] * n
+    extra = [INF] * n
+    p = [INF] * n
+
+    q = MinHeap()
+    q.push((0, 0, s))
+
+    d[s] = 0
+    extra[s] = 0
     
-#     while (!q.empty())
-#     {
-#         ThreeInts top_triad = q.top();
-#         uint32_t cur_d = std::get<0>(top_triad);
-#         uint32_t v = std::get<2>(top_triad);
-#         q.pop();
-#         if (cur_d > d[v])
-#             continue;
-#         for (auto cruises_map : graph.getCruisesMapFromStation(v))
-#         {
-#             uint32_t u = cruises_map.first;
-#             std::vector<Cruise> cruises = cruises_map.second;
-#             uint32_t min_w = INF;
-#             uint32_t extra_for_min_w = INF;
-#             Cruise cruise_for_min_w;
-#             for (Cruise cruise : cruises)
-#             {
-#                 uint32_t w, extra;
-#                 if (to_optimize == 0)
-#                 {
-#                     w = cruise.cruise_time;
-#                     extra = cruise.cruise_cost;
-#                 }
-#                 else if (to_optimize == 1)
-#                 {
-#                     w = cruise.cruise_cost;
-#                     extra = cruise.cruise_time;
-#                 }
-#                 if (vehicles_types.find(cruise.vehicle_id) != vehicles_types.end())
-#                 {
-#                     if (w < min_w || w == min_w && extra < extra_for_min_w)
-#                     {
-#                         min_w = w;
-#                         extra_for_min_w = extra;
-#                         cruise_for_min_w = cruise;
-#                     }
-#                 }
-#             }
-#             if (min_w < INF && (d[u] > d[v] + min_w || d[u] == d[v] + min_w && extra[u] > extra[v] + extra_for_min_w))
-#             {
-#                 d[u] = d[v] + min_w;
-#                 extra[u] = extra[v] + extra_for_min_w;
-#                 p[u] = cruise_for_min_w;
-#                 q.push({d[u], extra[u], u});
-#             }
-#         }
-#     }
-# }
+    while q.size() > 0:
+        cur_d, _, v = q.extract()
+        if cur_d > d[v]:
+            continue
+        for u, cruises in graph.getCruisesMapFromStation(v):
+            min_w = INF
+            extra_for_min_w = INF
+            cruise_for_min_w = -1
+            for cruise in cruises:
+                w = -1
+                extra = -1
+                if to_optimize == 0:
+                    w = cruise.cruise_time
+                    extra = cruise.cruise_cost
+                elif to_optimize == 1:
+                    w = cruise.cruise_cost
+                    extra = cruise.cruise_time
+                if cruise.vehicle_id in vehicles_types:
+                    if w < min_w or w == min_w and extra < extra_for_min_w:
+                        min_w = w
+                        extra_for_min_w = extra
+                        cruise_for_min_w = cruise
+            if min_w < INF and (d[u] > d[v] + min_w or d[u] == d[v] + min_w and extra[u] > extra[v] + extra_for_min_w):
+                d[u] = d[v] + min_w
+                extra[u] = extra[v] + extra_for_min_w
+                p[u] = cruise_for_min_w
+                q.push((d[u], extra[u], u))
+    
+    return d, extra, p
+}
