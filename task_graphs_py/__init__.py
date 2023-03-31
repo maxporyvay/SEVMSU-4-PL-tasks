@@ -5,6 +5,7 @@ import curses
 import sys
 import os
 from datetime import datetime
+from time import time
 from resource import getrusage, RUSAGE_SELF
 
 
@@ -19,7 +20,7 @@ WANT_TO_EXIT = 5
 
 
 def main(stdscr):
-    # auto start_program = std::chrono::high_resolution_clock::now();
+    start_program = time()
 
     station_name_to_id = {}
     station_id_to_name = {}
@@ -182,11 +183,11 @@ def main(stdscr):
                     else:
                         vehicles_types.remove(current_vehicle_id)
 
-        #if current_item_index != WANT_TO_EXIT:
-            #log << "Выбранные виды транспорта: "
-            #for vehicle in vehicles_types:
-                #log << vehicle_id_to_name[vehicle] << ", "
-            #log << std::endl
+        if current_item_index != WANT_TO_EXIT:
+            print('Выбранные виды транспорта: ', file=log, end='')
+            for vehicle in vehicles_types:
+                print(f'{vehicle_id_to_name[vehicle]}, ', end='', file=log)
+            print(file=log)
 
         curses.echo()
 
@@ -218,7 +219,7 @@ def main(stdscr):
             from_id = station_name_to_id[station_from]
             to_id = station_name_to_id[station_to]
 
-            #auto start_operation = std::chrono::high_resolution_clock::now()
+            start_operation = time()
             
             d, extra, p = dijkstra_extra_cond(from_id, next_station_id, graph, 0, vehicles_types)
 
@@ -229,14 +230,10 @@ def main(stdscr):
                     next_cruise = p[current_station]
                     trip += next_cruise
                     current_station = next_cruise.from_id
-            #auto end_operation = std::chrono::high_resolution_clock::now()
-            #std::chrono::duration<double> operation_time = end_operation - start_operation
-            #log << "Время выполнения запроса: " << operation_time.count() << " сек." << std::endl
+            end_operation = time()
+            print(f'Время выполнения запроса: {end_operation - start_operation} сек.', file=log)
 
-            #if (getrusage(RUSAGE_SELF, &rusage) != -1)
-            #{
-                #log << "Max RSS: " << (double)rusage.ru_maxrss << " KiB" << std::endl
-            #}
+            print(f'Max RSS: {getrusage(RUSAGE_SELF).ru_maxrss} KiB\n', file=log)
             
             if trip.cruises_num > 0:
                 for count in range(1, trip.cruises_num + 1):
@@ -248,18 +245,17 @@ def main(stdscr):
                     cost_ = cruise.cruise_cost
                     stdscr.addstr(f'{count}) Из: {from_st}, в: {to_st}, транспорт: {vehicle}, время: {time_}, стоимость: {cost_}\n')
                     stdscr.refresh()
-                    #log << count << ") Из: " << from << ", в: " << to << ", транспорт: " << vehicle
-                    #log << ", время: " << time_ << ", стоимость: " << cost_ << std::endl
+                    print(f'{count}) Из: {from_st}, в: {to_st}, транспорт: {vehicle}, время: {time_}, стоимость: {cost_}', file=log)
                 stdscr.addstr(f'Время пути: {trip.trip_time}\n')
                 stdscr.refresh()
-                #log << "Время пути: " << trip.trip_time << std::endl
+                print(f'Время пути: {trip.trip_time}', file=log)
                 stdscr.addstr(f'Стоимость пути: {trip.trip_cost}\n')
                 stdscr.refresh()
-                #log << "Стоимость пути: " << trip.trip_cost << std::endl
-                #log << std::endl
+                print(f'Стоимость пути: {trip.trip_cost}', file=log)
+                print(file=log)
             else:
                 stdscr.addstr('С помощью данных видов транспорта город прибытия не достижим из города отправления\n')
-                #log << "С помощью данных видов транспорта город прибытия не достижим из города отправления" << std::endl << std::endl
+                print("С помощью данных видов транспорта город прибытия не достижим из города отправления\n", file=log)
                 stdscr.refresh()
             stdscr.addstr('Нажмите любую клавишу для перехода в меню\n')
             stdscr.refresh()
@@ -691,9 +687,8 @@ def main(stdscr):
 
     curses.endwin()
 
-    # auto end_program = std::chrono::high_resolution_clock::now();
-    # std::chrono::duration<double> program_duration = end_program - start_program;
-    # log << "Время выполнения программы: " << program_duration.count() << " сек." << std::endl;
+    end_program = time()
+    print(f'Время выполнения программы: {end_program - start_program} сек.', file=log)
 
     print(f'Max RSS: {getrusage(RUSAGE_SELF).ru_maxrss} KiB\n', file=log)
 
