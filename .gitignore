@@ -1,3 +1,4 @@
 main
 *.sh
 log.txt
+__pycache__

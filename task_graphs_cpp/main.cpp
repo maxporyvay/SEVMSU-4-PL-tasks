@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 
     CruisesGraph graph;
 
-    std::string filename = "input.txt";
+    std::string filename = "../input.txt";
     if (argc > 1)
     {
         filename = argv[1];

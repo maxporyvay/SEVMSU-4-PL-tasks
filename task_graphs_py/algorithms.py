@@ -1,4 +1,4 @@
-from task_graphs_py.classes import INF, Queue, MinHeap, Cruise, Trip, CruisesGraph
+from task_graphs_py.classes import INF, Queue, MinHeap
 
 
 def bfs(s, n, graph, vehicles_types):
@@ -60,8 +60,7 @@ def dijkstra(s, n, graph, to_optimize, vehicles_types):
     return d, p
 
 
-def dijkstra_extra_cond(s, n, graph, to_optimize, vehicles_types)
-{
+def dijkstra_extra_cond(s, n, graph, to_optimize, vehicles_types):
     d = [INF] * n
     extra = [INF] * n
     p = [INF] * n
@@ -101,4 +100,3 @@ def dijkstra_extra_cond(s, n, graph, to_optimize, vehicles_types)
                 q.push((d[u], extra[u], u))
     
     return d, extra, p
-}

@@ -71,7 +71,7 @@ class MinHeap:
 
 
 class Cruise:
-    def __init__(self, f_id=-1, t_id=-1, v_id=-1, t=-1, c=-1)
+    def __init__(self, f_id=-1, t_id=-1, v_id=-1, t=-1, c=-1):
         self.from_id = f_id
         self.to_id = t_id
         self.vehicle_id = v_id
@@ -96,7 +96,7 @@ class Trip:
     def __iadd__(self, cruise):
         return self + cruise
 
-    def __getitem__(self, index)
+    def __getitem__(self, index):
         return self.cruises_vector[self.cruises_num - index - 1]
 
 
@@ -104,13 +104,13 @@ class CruisesGraph:
     def __init__(self):
         self.graph = {}
 
-    def insertCruise(cruise):
+    def insertCruise(self, cruise):
         if cruise.from_id not in self.graph:
-            graph[cruise.from_id] = {cruise.to_id: [cruise]}
+            self.graph[cruise.from_id] = {cruise.to_id: [cruise]}
         elif cruise.to_id not in self.graph[cruise.from_id]:
-            graph[cruise.from_id][cruise.to_id] = [cruise]
+            self.graph[cruise.from_id][cruise.to_id] = [cruise]
         else:
-            graph[cruise.from_id][cruise.to_id].append(cruise)
+            self.graph[cruise.from_id][cruise.to_id].append(cruise)
 
-    def getCruisesMapFromStation(station_id):
-        return graph[station_id]
+    def getCruisesMapFromStation(self, station_id):
+        return self.graph[station_id]
