@@ -5,7 +5,7 @@ def bfs(s, n, graph, vehicles_types):
     d = [INF] * n
     p = [INF] * n
 
-    q = Queue(INF)
+    q = Queue(INF // 1000)
     q.push(s)
     
     d[s] = 0
