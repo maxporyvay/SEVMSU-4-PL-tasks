@@ -157,10 +157,28 @@ def main(stdscr):
                         stdscr.attroff(curses.A_STANDOUT)
                 stdscr.addstr('\n')
                 stdscr.refresh()
+                
                 if current_vehicle_id == next_vehicle_id:
                     stdscr.attron(curses.A_STANDOUT)
-                stdscr.addstr('Далее')
+                stdscr.addstr('Выбрать все виды транспорта\n')
                 if current_vehicle_id == next_vehicle_id:
+                    stdscr.attroff(curses.A_STANDOUT)
+                stdscr.refresh()
+
+                if current_vehicle_id == next_vehicle_id + 1:
+                    stdscr.attron(curses.A_STANDOUT)
+                stdscr.addstr('Отменить выбор всех видов транспорта\n')
+                if current_vehicle_id == next_vehicle_id + 1:
+                    stdscr.attroff(curses.A_STANDOUT)
+                stdscr.refresh()
+
+                stdscr.addstr('\n')
+                stdscr.refresh()
+
+                if current_vehicle_id == next_vehicle_id + 2:
+                    stdscr.attron(curses.A_STANDOUT)
+                stdscr.addstr('Далее')
+                if current_vehicle_id == next_vehicle_id + 2:
                     stdscr.attroff(curses.A_STANDOUT)
                 stdscr.refresh()
 
@@ -169,15 +187,20 @@ def main(stdscr):
                     if current_vehicle_id > 0:
                         current_vehicle_id -= 1
                     else:
-                        current_vehicle_id = next_vehicle_id
+                        current_vehicle_id = next_vehicle_id + 2
                 elif key == curses.KEY_DOWN:
-                    if current_vehicle_id < next_vehicle_id:
+                    if current_vehicle_id < next_vehicle_id + 2:
                         current_vehicle_id += 1
                     else:
                         current_vehicle_id = 0
                         
                 elif key == curses.KEY_ENTER or key == 10 or key == 13:
                     if current_vehicle_id == next_vehicle_id:
+                        for vehicle_id in range(next_vehicle_id):
+                            vehicles_types.add(vehicle_id) 
+                    elif current_vehicle_id == next_vehicle_id + 1:
+                        vehicles_types = set()
+                    elif current_vehicle_id == next_vehicle_id + 2:
                         vehicles_chosen = True
                     elif current_vehicle_id not in vehicles_types:
                         vehicles_types.add(current_vehicle_id)

@@ -294,12 +294,38 @@ int main(int argc, char** argv)
                 }
                 addstr("\n");
                 refresh();
+
                 if (current_vehicle_id == next_vehicle_id)
                 {
                     attron(A_STANDOUT);
                 }
-                addstr("Далее");
+                addstr("Выбрать все виды транспорта\n");
                 if (current_vehicle_id == next_vehicle_id)
+                {
+                    attroff(A_STANDOUT);
+                }
+                refresh();
+
+                if (current_vehicle_id == next_vehicle_id + 1)
+                {
+                    attron(A_STANDOUT);
+                }
+                addstr("Отменить выбор всех видов транспорта\n");
+                if (current_vehicle_id == next_vehicle_id + 1)
+                {
+                    attroff(A_STANDOUT);
+                }
+                refresh();
+
+                addstr("\n");
+                refresh();
+
+                if (current_vehicle_id == next_vehicle_id + 2)
+                {
+                    attron(A_STANDOUT);
+                }
+                addstr("Далее");
+                if (current_vehicle_id == next_vehicle_id + 2)
                 {
                     attroff(A_STANDOUT);
                 }
@@ -315,14 +341,14 @@ int main(int argc, char** argv)
                         }
                         else
                         {
-                            current_vehicle_id = next_vehicle_id;
+                            current_vehicle_id = next_vehicle_id + 2;
                         }
                         break;
                     }
 
                     case KEY_DOWN:
                     {
-                        if (current_vehicle_id < next_vehicle_id)
+                        if (current_vehicle_id < next_vehicle_id + 2)
                         {
                             current_vehicle_id++;
                         }
@@ -336,6 +362,17 @@ int main(int argc, char** argv)
                     case (int)'\n':
                     {
                         if (current_vehicle_id == next_vehicle_id)
+                        {
+                            for (uint32_t vehicle_id = 0; vehicle_id < next_vehicle_id; vehicle_id++)
+                            {
+                                vehicles_types.insert(vehicle_id);
+                            }
+                        }
+                        else if (current_vehicle_id == next_vehicle_id + 1)
+                        {
+                            vehicles_types.erase(vehicles_types.begin(), vehicles_types.end());
+                        }
+                        else if (current_vehicle_id == next_vehicle_id + 2)
                         {
                             vehicles_chosen = true;
                         }
