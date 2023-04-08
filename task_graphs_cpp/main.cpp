@@ -473,8 +473,11 @@ int main(int argc, char** argv)
 
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
                 {
-                    log << "Max RSS: " << (double)rusage.ru_maxrss << " KiB" << std::endl;
+                    log << "Max RSS: " << (double)rusage.ru_maxrss << " KiB\n" << std::endl;
                 }
+
+                log << "CPP; Время: " << operation_time.count() << " сек.; MaxRSS: " << (double)rusage.ru_maxrss << " KiB; ";
+                log << "Тип запроса: " << current_item_index + 1 << std::endl << std::endl;
                 
                 if (trip.cruises_num > 0)
                 {
@@ -575,9 +578,12 @@ int main(int argc, char** argv)
 
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
                 {
-                    log << "Max RSS: " << (double)rusage.ru_maxrss << " KiB" << std::endl;
+                    log << "Max RSS: " << (double)rusage.ru_maxrss << " KiB\n" << std::endl;
                 }
                 
+                log << "CPP; Время: " << operation_time.count() << " сек.; MaxRSS: " << (double)rusage.ru_maxrss << " KiB; ";
+                log << "Тип запроса: " << current_item_index + 1 << std::endl << std::endl;
+
                 if (trip.cruises_num > 0)
                 {
                     for (uint32_t count = 1; count <= trip.cruises_num; count++)
@@ -677,8 +683,11 @@ int main(int argc, char** argv)
 
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
                 {
-                    log << "Max RSS: " << (double)rusage.ru_maxrss << " KiB" << std::endl;
+                    log << "Max RSS: " << (double)rusage.ru_maxrss << " KiB\n" << std::endl;
                 }
+
+                log << "CPP; Время: " << operation_time.count() << " сек.; MaxRSS: " << (double)rusage.ru_maxrss << " KiB; ";
+                log << "Тип запроса: " << current_item_index + 1 << std::endl << std::endl;
                 
                 if (trip.cruises_num > 0)
                 {
@@ -784,8 +793,11 @@ int main(int argc, char** argv)
 
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
                 {
-                    log << "Max RSS: " << (double)rusage.ru_maxrss << " KiB" << std::endl;
+                    log << "Max RSS: " << (double)rusage.ru_maxrss << " KiB\n" << std::endl;
                 }
+
+                log << "CPP; Время: " << operation_time.count() << " сек.; MaxRSS: " << (double)rusage.ru_maxrss << " KiB; ";
+                log << "Тип запроса: " << current_item_index + 1 << std::endl << std::endl;
 
                 if (!trips_map.empty())
                 {
@@ -902,8 +914,11 @@ int main(int argc, char** argv)
 
                 if (getrusage(RUSAGE_SELF, &rusage) != -1)
                 {
-                    log << "Max RSS: " << (double)rusage.ru_maxrss << " KiB" << std::endl;
+                    log << "Max RSS: " << (double)rusage.ru_maxrss << " KiB\n" << std::endl;
                 }
+
+                log << "CPP; Время: " << operation_time.count() << " сек.; MaxRSS: " << (double)rusage.ru_maxrss << " KiB; ";
+                log << "Тип запроса: " << current_item_index + 1 << std::endl << std::endl;
 
                 if (!trips_map.empty())
                 {

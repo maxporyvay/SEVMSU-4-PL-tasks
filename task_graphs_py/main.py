@@ -7,7 +7,7 @@ import curses
 import sys
 import os
 from datetime import datetime
-from time import time
+from time import time_ns
 from resource import getrusage, RUSAGE_SELF
 
 
@@ -22,7 +22,7 @@ WANT_TO_EXIT = 5
 
 
 def main(stdscr):
-    start_program = time()
+    start_program = time_ns()
 
     station_name_to_id = {}
     station_id_to_name = {}
@@ -243,7 +243,7 @@ def main(stdscr):
             from_id = station_name_to_id[station_from]
             to_id = station_name_to_id[station_to]
 
-            start_operation = time()
+            start_operation = time_ns()
             
             d, extra, p = dijkstra_extra_cond(from_id, next_station_id, graph, 0, vehicles_types)
 
@@ -254,10 +254,15 @@ def main(stdscr):
                     next_cruise = p[current_station]
                     trip += next_cruise
                     current_station = next_cruise.from_id
-            end_operation = time()
-            print(f'Время выполнения запроса: {end_operation - start_operation} сек.', file=log)
+            end_operation = time_ns()
+            print(f'Время выполнения запроса: {(end_operation - start_operation) / 10 ** 9} сек.', file=log)
 
             print(f'Max RSS: {getrusage(RUSAGE_SELF).ru_maxrss} KiB\n', file=log)
+
+            shortlogstr = f'PYTHON; Время: {(end_operation - start_operation) / 10 ** 9} сек.; MaxRSS: {getrusage(RUSAGE_SELF).ru_maxrss} KiB; '
+            shortlogstr += f'Тип запроса: {current_item_index + 1}'
+            print(shortlogstr, file=log)
+            print(file=log)
             
             if trip.cruises_num > 0:
                 for count in range(1, trip.cruises_num + 1):
@@ -314,7 +319,7 @@ def main(stdscr):
             from_id = station_name_to_id[station_from]
             to_id = station_name_to_id[station_to]
 
-            start_operation = time()
+            start_operation = time_ns()
             
             d, p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types)
 
@@ -325,10 +330,15 @@ def main(stdscr):
                     next_cruise = p[current_station]
                     trip += next_cruise
                     current_station = next_cruise.from_id
-            end_operation = time()
-            print(f'Время выполнения запроса: {end_operation - start_operation} сек.', file=log)
+            end_operation = time_ns()
+            print(f'Время выполнения запроса: {(end_operation - start_operation) / 10 ** 9} сек.', file=log)
 
             print(f'Max RSS: {getrusage(RUSAGE_SELF).ru_maxrss} KiB\n', file=log)
+
+            shortlogstr = f'PYTHON; Время: {(end_operation - start_operation) / 10 ** 9} сек.; MaxRSS: {getrusage(RUSAGE_SELF).ru_maxrss} KiB; '
+            shortlogstr += f'Тип запроса: {current_item_index + 1}'
+            print(shortlogstr, file=log)
+            print(file=log)
             
             if trip.cruises_num > 0:
                 for count in range(1, trip.cruises_num + 1):
@@ -385,7 +395,7 @@ def main(stdscr):
             from_id = station_name_to_id[station_from]
             to_id = station_name_to_id[station_to]
 
-            start_operation = time()
+            start_operation = time_ns()
             
             d, p = bfs(from_id, next_station_id, graph, vehicles_types)
 
@@ -396,10 +406,15 @@ def main(stdscr):
                     next_cruise = p[current_station]
                     trip += next_cruise
                     current_station = next_cruise.from_id
-            end_operation = time()
-            print(f'Время выполнения запроса: {end_operation - start_operation} сек.', file=log)
+            end_operation = time_ns()
+            print(f'Время выполнения запроса: {(end_operation - start_operation) / 10 ** 9} сек.', file=log)
 
             print(f'Max RSS: {getrusage(RUSAGE_SELF).ru_maxrss} KiB\n', file=log)
+
+            shortlogstr = f'PYTHON; Время: {(end_operation - start_operation) / 10 ** 9} сек.; MaxRSS: {getrusage(RUSAGE_SELF).ru_maxrss} KiB; '
+            shortlogstr += f'Тип запроса: {current_item_index + 1}'
+            print(shortlogstr, file=log)
+            print(file=log)
             
             if trip.cruises_num > 0:
                 for count in range(1, trip.cruises_num + 1):
@@ -456,7 +471,7 @@ def main(stdscr):
             limit_cost = int(limit_cost_str)
             from_id = station_name_to_id[station_from]
 
-            start_operation = time()
+            start_operation = time_ns()
 
             d, p = dijkstra(from_id, next_station_id, graph, 1, vehicles_types)
 
@@ -470,10 +485,15 @@ def main(stdscr):
                         trip += next_cruise
                         current_station = next_cruise.from_id
                     trips_map[i] = trip
-            end_operation = time()
-            print(f'Время выполнения запроса: {end_operation - start_operation} сек.', file=log)
+            end_operation = time_ns()
+            print(f'Время выполнения запроса: {(end_operation - start_operation) / 10 ** 9} сек.', file=log)
 
             print(f'Max RSS: {getrusage(RUSAGE_SELF).ru_maxrss} KiB\n', file=log)
+
+            shortlogstr = f'PYTHON; Время: {(end_operation - start_operation) / 10 ** 9} сек.; MaxRSS: {getrusage(RUSAGE_SELF).ru_maxrss} KiB; '
+            shortlogstr += f'Тип запроса: {current_item_index + 1}'
+            print(shortlogstr, file=log)
+            print(file=log)
 
             if len(trips_map) > 0:
                 for station_from_id, trip in trips_map.items():
@@ -537,7 +557,7 @@ def main(stdscr):
             limit_time = int(limit_time_str)
             from_id = station_name_to_id[station_from]
 
-            start_operation = time()
+            start_operation = time_ns()
 
             d, p = dijkstra(from_id, next_station_id, graph, 0, vehicles_types)
 
@@ -551,10 +571,15 @@ def main(stdscr):
                         trip += next_cruise
                         current_station = next_cruise.from_id
                     trips_map[i] = trip
-            end_operation = time()
-            print(f'Время выполнения запроса: {end_operation - start_operation} сек.', file=log)
+            end_operation = time_ns()
+            print(f'Время выполнения запроса: {(end_operation - start_operation) / 10 ** 9} сек.', file=log)
 
             print(f'Max RSS: {getrusage(RUSAGE_SELF).ru_maxrss} KiB\n', file=log)
+
+            shortlogstr = f'PYTHON; Время: {(end_operation - start_operation) / 10 ** 9} сек.; MaxRSS: {getrusage(RUSAGE_SELF).ru_maxrss} KiB; '
+            shortlogstr += f'Тип запроса: {current_item_index + 1}'
+            print(shortlogstr, file=log)
+            print(file=log)
 
             if len(trips_map) > 0:
                 for station_from_id, trip in trips_map.items():
@@ -595,8 +620,8 @@ def main(stdscr):
 
     curses.endwin()
 
-    end_program = time()
-    print(f'Время выполнения программы: {end_program - start_program} сек.', file=log)
+    end_program = time_ns()
+    print(f'Время выполнения программы: {(end_program - start_program) / 10 ** 9} сек.', file=log)
 
     print(f'Max RSS: {getrusage(RUSAGE_SELF).ru_maxrss} KiB\n', file=log)
 
