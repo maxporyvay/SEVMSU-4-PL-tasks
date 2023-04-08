@@ -1,4 +1,4 @@
-from task_graphs_py.classes import INF, Queue, MinHeap
+from classes import INF, Queue, MinHeap
 
 
 def bfs(s, n, graph, vehicles_types):

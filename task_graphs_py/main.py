@@ -1,5 +1,7 @@
-from task_graphs_py.classes import INF, Cruise, Trip, CruisesGraph
-from task_graphs_py.algorithms import bfs, dijkstra, dijkstra_extra_cond
+#!/usr/bin/python3
+
+from classes import INF, Cruise, Trip, CruisesGraph
+from algorithms import bfs, dijkstra, dijkstra_extra_cond
 
 import curses
 import sys
@@ -32,12 +34,11 @@ def main(stdscr):
 
     graph = CruisesGraph()
 
-    filename = 'input.txt'
-    if (len(sys.argv) == 2):
-        filename = sys.argv[1]
+    filename = os.getcwd() + '/' + sys.argv[1]
 
     want_to_exit = False
-    log = open(os.getcwd() + '/task_graphs_py/log.txt', 'a', encoding='utf-8')
+    log = open(str(os.path.join(os.path.dirname(__file__), '../log.txt')), 'a', encoding='utf-8')
+    print('PYTHON', file=log)
     print(datetime.now(), file=log)
 
     try:

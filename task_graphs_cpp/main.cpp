@@ -1,6 +1,7 @@
 #include "algorithms.hpp"
 #include "classes.hpp"
 
+#include <filesystem>
 #include <iostream>
 #include <fstream>
 #include <chrono>
@@ -8,6 +9,8 @@
 #include <algorithm>
 #include <sys/resource.h>
 #include <ncurses.h>
+
+#define EXECUTABLE_NAME_LENGTH 4
 
 #define OPTIONS_NUM 6
 
@@ -40,17 +43,20 @@ int main(int argc, char** argv)
 
     CruisesGraph graph;
 
-    std::string filename = "../input.txt";
-    if (argc > 1)
-    {
-        filename = argv[1];
-    }
+    std::string filename = std::filesystem::current_path();
+    filename += "/";
+    filename += argv[1];
 
     bool want_to_exit = false;
-    std::ofstream log("log.txt", std::ios_base::app);
+
+    std::string logpath = argv[0];
+    logpath.erase(logpath.size() - EXECUTABLE_NAME_LENGTH);
+    logpath += "../log.txt";
+    std::ofstream log(logpath, std::ios_base::app);
+    log << "CPP" << std::endl;
     
     std::time_t timestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    log << std::ctime(&timestamp) << std::endl;
+    log << std::ctime(&timestamp);
 
     std::ifstream in(filename);
     std::string line;
@@ -150,7 +156,7 @@ int main(int argc, char** argv)
     else
     {
         want_to_exit = true;
-        log << "Не найден файл графа" << std::endl;
+        log << "Проблема с файлом графа => завершение работы программы" << std::endl;
     }
 
     // for (auto pair : graph.graph)
